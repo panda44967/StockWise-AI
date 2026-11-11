@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Streamlit
+.streamlit/
+
+# OS / Temporary
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Unrelated project files
+chem_guard/
+*chemguard*
+*ChemGuard*
+啟動_化學法規預測系統.bat
+build_both_reports.py
+generate_pdf.py
+學生公版_初審_v26.pdf
+學生公版_複審_v26.pdf
+初審報告_StockWise_股市決策建議.pdf

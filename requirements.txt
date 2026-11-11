@@ -1,0 +1,8 @@
+# StockWise-AI Python Dependencies
+# 國立臺北商業大學 人工智慧科技應用學士後專班 實務專題 - 張琬婷 (p1146106)
+streamlit>=1.30.0
+pandas>=2.0.0
+numpy>=1.24.0
+plotly>=5.15.0
+yfinance>=0.2.30
+scikit-learn>=1.3.0
