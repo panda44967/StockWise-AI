@@ -10,7 +10,7 @@ ENV/
 .venv/
 
 # Streamlit
-.streamlit/
+# (Allow .streamlit/config.toml for production security)
 
 # OS / Temporary
 .DS_Store

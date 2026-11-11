@@ -26,6 +26,13 @@ except ImportError:
     from stock_advisor import ml_model
     importlib.reload(ml_model)
 
+try:
+    import security
+    importlib.reload(security)
+except ImportError:
+    from stock_advisor import security
+    importlib.reload(security)
+
 from engine import (
     get_stock_profile, get_historical_candles, evaluate_investment_status,
     get_high_dividend_stocks, get_industry_recommendations,
@@ -33,6 +40,10 @@ from engine import (
     get_all_etfs, MARKET_DATA, ETF_DATA
 )
 from ml_model import predict_stock_ai, get_ai_model_diagnostics, rank_universe_stocks
+from security import (
+    sanitize_ticker_input, safe_html, check_client_rate_limit,
+    get_security_logger, get_system_security_report
+)
 
 st.set_page_config(
     page_title="StockWise-AI 機器學習長線投資決策平台",
@@ -196,7 +207,16 @@ if nav_choice == "🎯 AI 標的智能診斷與勝率推論 (ML Inference)":
         st.write("")
         analyze_btn = st.button("🚀 啟動 AI 智能診斷", type="primary", use_container_width=True)
 
-    ticker = ticker_input.strip().upper() if ticker_input else "2330.TW"
+    # DoS Request Throttling Check (G5/G7)
+    allowed, rate_msg = check_client_rate_limit()
+    if not allowed:
+        st.warning(f"🛡️ {rate_msg}")
+
+    # Strict Input Sanitization & Whitelist Verification (G5)
+    clean_t, is_valid_t, sec_msg = sanitize_ticker_input(ticker_input)
+    if not is_valid_t:
+        st.warning(f"🛡️ 資安防護提示：{sec_msg}")
+    ticker = clean_t
     is_etf = is_etf_ticker(ticker)
 
     with st.spinner(f"正在擷取 {ticker} 最新財報與行情資料，執行機器學習推論..."):
@@ -802,3 +822,24 @@ elif nav_choice == "💰 台股高息「存股專區」 (買了放著安心領�
         
     with st.expander("Q2：存股什麼時候買最好？一定要等便宜價嗎？"):
         st.write("答：存股族最佳策略是『**定期定額＋拉回大跌時加碼**』。當股價落在合理偏低或便宜價時，殖利率會被放大（例如兆豐金跌至 36 元以下時殖利率破 5%），此時是擴大本金持股部位的最佳時機。")
+
+
+# =========================================================================
+# G5 / G6 / G7: 專題初審資安強化、即時稽核日誌與系統健全性面板
+# =========================================================================
+st.write("")
+st.divider()
+with st.expander("🛡️ 專題審查專用：系統資安防禦強化 (G5)、即時稽核日誌 (G6) 與健康探針 (G7)", expanded=False):
+    st.markdown("##### 🔒 資安防禦機制符合性 (Security & Hardening Checklist - G5)")
+    sec_rep = get_system_security_report()
+    s1, s2, s3, s4 = st.columns(4)
+    s1.success(f"**輸入正則白名單**\n\n{sec_rep['input_validation']}")
+    s2.info(f"**XSS / 注入防禦**\n\n{sec_rep['xss_defense']}")
+    s3.warning(f"**零個資儲存 (PII)**\n\n無狀態地端隔離")
+    s4.success(f"**API 金鑰洩漏風險**\n\n{sec_rep['api_leak_risk']}")
+
+    st.markdown("##### 📋 即時系統運作與安全稽核日誌 (Audit Logs - G6)")
+    st.caption("系統後端記憶體環形緩衝區（Ring Buffer）自動記錄之即時安全日誌：")
+    recent_logs = get_security_logger().get_recent_logs(limit=15)
+    df_logs = pd.DataFrame(recent_logs)[["timestamp", "category", "level", "message"]]
+    st.dataframe(df_logs, use_container_width=True, hide_index=True)

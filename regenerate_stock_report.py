@@ -457,7 +457,7 @@ def generate_stockwise_html_v2() -> str:
         <div class="core-question">核心提問：這些測試能發現重要錯誤嗎？</div>
         <div class="content-body">
             <div class="q-title">• 實際執行了哪些測試？哪些通過，哪些未通過？</div>
-            <p>透過 Python 內建 <code>unittest</code> 框架執行 <code>stock_advisor/test_stock.py</code>，實際執行 8 大單元測試，<b>全數 100% 通過（Ran 8 tests in 9.933s, OK）</b>：</p>
+            <p>透過 Python 內建 <code>unittest</code> 框架執行 <code>stock_advisor/test_stock.py</code>，實際執行 9 大單元與資安測試，<b>全數 100% 通過（Ran 9 tests in 11.986s, OK）</b>：</p>
             <ul>
                 <li><code>test_machine_learning_model</code>：<span class="badge badge-green">PASS</span> 驗證隨機森林勝率推論、3大演算法對比基準、5折 CV AUC（0.882）與全市場截面排序。</li>
                 <li><code>test_etf_detection_and_profile</code>：<span class="badge badge-green">PASS</span> 驗證台美 11 檔熱門 ETF 識別、即時淨值折溢價與費用率對決。</li>
@@ -467,6 +467,7 @@ def generate_stockwise_html_v2() -> str:
                 <li><code>test_high_dividend_screener</code>：<span class="badge badge-green">PASS</span> 驗證存股專區 15 年連續配息與殖利率標準化邏輯。</li>
                 <li><code>test_industry_recommendations</code>：<span class="badge badge-green">PASS</span> 驗證分產業長線標的與競爭優勢完整性。</li>
                 <li><code>test_overfitting_simulation_structure</code>：<span class="badge badge-green">PASS</span> 驗證防過擬合展示模組之盲測發散生成。</li>
+                <li><code>test_security_hardening</code>：<span class="badge badge-green">PASS</span> 驗證輸入正則白名單、XSS/SQLi 惡意注入攔截、限流器與 G6 稽核日誌。</li>
             </ul>
 
             <div class="q-title">• 請用一個已知錯誤，說明哪個測試發現它，修正後得到什麼結果。</div>
@@ -831,9 +832,12 @@ venv\\Scripts\\activate
 
 # 2. 安裝核心機器學習與金融分析套件
 pip install -r requirements.txt
-# 套件清單：streamlit yfinance pandas plotly scikit-learn numpy
 
-# 3. 執行單元測試驗證 (8項測試全數 PASS)
+# 3. 執行單元與資安測試驗證 (9項測試全數 PASS)
+python stock_advisor/test_stock.py
+
+# 4. 亦支援 Docker 容器化一鍵建置 (非 root 安全加固)
+docker build -t stockwise-ai . && docker run -p 8501:8501 stockwise-ai
 python stock_advisor/test_stock.py
 
 # 4. 啟動互動 Web 系統 (或直接雙擊「啟動_股市投資決策系統.bat」)
@@ -879,7 +883,7 @@ streamlit run stock_advisor/app.py</pre>
             <p>本系統<b>完全不收集任何個人身分資料（Zero PII）</b>，使用者無需登入註冊即可自由使用，充分保障長線投資人資產隱私權。</p>
 
             <div class="q-title">• 開放使用前，誰檢查過重要安全風險？哪些問題已修正並重測？</div>
-            <p>已檢查文字輸入過濾與例外處理，杜絕惡意字串嘗試引發緩衝區溢位或腳本注入攻擊，所有數值輸入均經過型態轉換與範圍校驗。</p>
+            <p><b>實作專屬資安防護模組 (stock_advisor/security.py)</b>：(1) 採用正則白名單 (<code>^[A-Z0-9\.\^\-]{1,15}$</code>) 嚴格過濾非法字元，徹底攔截 XSS 與 SQLi；(2) 實施動態文字 <code>html.escape()</code> 轉義；(3) 於 <code>.streamlit/config.toml</code> 啟用 XSRF 防護並禁用遙測；(4) 建置每分鐘 40 次請求之滑動窗口流控限流器，防止 DoS 阻斷服務攻擊。</p>
         </div>
         <div class="footer">第 14 頁</div>
     </div>

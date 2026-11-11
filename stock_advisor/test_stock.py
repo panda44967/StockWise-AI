@@ -137,5 +137,46 @@ class TestStockWise(unittest.TestCase):
         self.assertIn("Actual_Price", df.columns)
         self.assertIn("Overfitted_ML_Curve", df.columns)
 
+    def test_security_hardening(self):
+        from stock_advisor.security import (
+            sanitize_ticker_input, safe_html, check_client_rate_limit,
+            get_security_logger, get_system_security_report
+        )
+        
+        # 1. Valid ticker tests
+        clean_tw, valid_tw, _ = sanitize_ticker_input("2330")
+        self.assertEqual(clean_tw, "2330.TW")
+        self.assertTrue(valid_tw)
+
+        clean_us, valid_us, _ = sanitize_ticker_input("aapl ")
+        self.assertEqual(clean_us, "AAPL")
+        self.assertTrue(valid_us)
+
+        # 2. Malicious injection attempts (XSS, SQLi, Path traversal)
+        _, valid_xss, msg_xss = sanitize_ticker_input("<script>alert('xss')</script>")
+        self.assertFalse(valid_xss)
+        self.assertIn("注入攻擊", msg_xss)
+
+        _, valid_sqli, msg_sqli = sanitize_ticker_input("' UNION SELECT * FROM users--")
+        self.assertFalse(valid_sqli)
+
+        _, valid_path, _ = sanitize_ticker_input("../../etc/passwd")
+        self.assertFalse(valid_path)
+
+        # 3. HTML escaping
+        escaped = safe_html("<img src=x onerror=alert(1)>")
+        self.assertNotIn("<img", escaped)
+        self.assertIn("&lt;img", escaped)
+
+        # 4. Audit logger & security report
+        report = get_system_security_report()
+        self.assertEqual(report["status"], "SECURE")
+        self.assertEqual(report["zero_pii"], "Compliant (Stateless Local Session, No Persistent User Storage)")
+        self.assertEqual(report["api_leak_risk"], "Zero (No Paid / Cloud Secret API Keys in Codebase)")
+
+        logger = get_security_logger()
+        logs = logger.get_recent_logs()
+        self.assertGreater(len(logs), 0)
+
 if __name__ == "__main__":
     unittest.main()
