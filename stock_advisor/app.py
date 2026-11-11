@@ -1,5 +1,5 @@
 """
-StockWise-AI: 運用多因子機器學習模型預測台美雙市場長期投資標的之決策決策平台
+StockWise-AI: 運用多因子機器學習模型預測台美雙市場長期投資標的之決策平台
 國立臺北商業大學 人工智慧科技應用學士後專班 115 學年度 實務專題
 專題作者：張琬婷 (學號: p1146106)
 """
@@ -36,37 +36,55 @@ from ml_model import predict_stock_ai, get_ai_model_diagnostics, rank_universe_s
 
 st.set_page_config(
     page_title="StockWise-AI 機器學習長線投資決策平台",
-    page_icon="🤖",
+    page_icon="📈",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS styling
+# Custom CSS styling with font fallbacks and anti-truncation rules
 st.markdown("""
 <style>
+    /* Robust unicode font fallback stack ensuring no broken glyphs or tofu boxes */
+    html, body, [class*="css"], [class*="st-"] {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", "PingFang TC", "Microsoft JhengHei", "微軟正黑體", sans-serif !important;
+    }
+
+    /* Force all Streamlit metrics and headers to wrap naturally and NEVER truncate with ellipsis */
+    div[data-testid="stMetricValue"], 
+    div[data-testid="stMetricLabel"], 
+    div[data-testid="stMetricDelta"] {
+        white-space: normal !important;
+        word-break: break-word !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+    }
+    div[data-testid="stMetricValue"] {
+        font-size: 1.2rem !important;
+        font-weight: 700 !important;
+        line-height: 1.3 !important;
+    }
+    div[data-testid="stMetricLabel"] {
+        font-size: 0.85rem !important;
+        color: #475569 !important;
+        line-height: 1.3 !important;
+    }
+    div[data-testid="stMetricDelta"] {
+        font-size: 0.8rem !important;
+        white-space: normal !important;
+    }
+
     .main-header {
-        font-size: 26px;
+        font-size: 24px;
         font-weight: 700;
         color: #0f172a;
         margin-bottom: 6px;
     }
     .metric-card {
-        background-color: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background-color: #ffffff;
+        border: 1.5px solid #e2e8f0;
         border-radius: 8px;
-        padding: 14px;
-        text-align: center;
+        padding: 12px 14px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .metric-value {
-        font-size: 22px;
-        font-weight: 700;
-        color: #1e3a8a;
-    }
-    .metric-label {
-        font-size: 13px;
-        color: #64748b;
-        margin-bottom: 4px;
     }
     .status-box {
         padding: 14px;
@@ -77,17 +95,22 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Sidebar
-st.sidebar.markdown("### 🤖 **StockWise-AI**")
+st.sidebar.markdown("""
+<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+    <span style="background: #2563eb; color: white; font-weight: 900; font-size: 12px; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.5px;">AI</span>
+    <span style="font-size: 20px; font-weight: 800; color: #0f172a;">StockWise</span>
+</div>
+""", unsafe_allow_html=True)
 st.sidebar.caption("多因子機器學習預測 ✕ 長期價值投資決策平台")
 
 nav_choice = st.sidebar.radio(
     "功能導覽",
     [
-        "🤖 機器學習長線標的智能診斷與勝率預測 (ML Inference)",
-        "🏆 機器學習長線優選標的排行榜 (ML Cross-Sectional Leaderboard)",
-        "🔬 機器學習模型訓練、特徵工程與防過擬合實驗室 (ML Lab & Overfitting Defense)",
-        "📦 台美熱門 ETF 存股指南（市值型 ✕ 高股息 ✕ 費率對決）",
-        "💰 台股高息「存股專區」（買了放著安心領利息）"
+        "🎯 AI 標的智能診斷與勝率推論 (ML Inference)",
+        "🏆 全市場長線優選標的排行榜 (ML Leaderboard)",
+        "🛡️ 機器學習防過擬合與驗證實驗室 (ML Lab)",
+        "📦 台美熱門 ETF 存股指南 (市值型 ✕ 高股息 ✕ 費率對決)",
+        "💰 台股高息「存股專區」 (買了放著安心領利息)"
     ]
 )
 
@@ -110,8 +133,8 @@ st.sidebar.markdown("""
 # =========================================================================
 # PAGE 1: 機器學習長線標的智能診斷與勝率預測 (ML Inference & XAI)
 # =========================================================================
-if nav_choice == "🤖 機器學習長線標的智能診斷與勝率預測 (ML Inference)":
-    st.markdown('<div class="main-header">🤖 機器學習長線標的智能診斷與勝率預測</div>', unsafe_allow_html=True)
+if nav_choice == "🎯 AI 標的智能診斷與勝率推論 (ML Inference)":
+    st.markdown('<div class="main-header">🎯 AI 標的智能診斷與勝率推論</div>', unsafe_allow_html=True)
     st.caption("輸入台股或美股代號，Scikit-Learn 機器學習模型即刻推論長線超額報酬勝率，並深度解析 8 大核心財務因子貢獻。")
 
     col_m, col_t, col_btn = st.columns([1.3, 2.4, 1])
@@ -191,45 +214,94 @@ if nav_choice == "🤖 機器學習長線標的智能診斷與勝率預測 (ML I
     # -------------------------------------------------------------
     if not is_etf and stock:
         st.markdown(f"""
-        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%); border: 2px solid #38bdf8; border-radius: 10px; padding: 16px 20px; margin-top: 10px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-size: 15px; font-weight: 700; color: #0369a1;">🤖 Scikit-Learn 多因子機器學習模型推論報告</span>
+        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%); border: 2px solid #38bdf8; border-radius: 10px; padding: 16px 20px; margin-top: 10px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="background: #0284c7; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 800; letter-spacing: 0.5px;">AI MODEL</span>
+                    <span style="font-size: 15px; font-weight: 700; color: #0369a1;">Scikit-Learn 多因子機器學習模型推論報告</span>
+                </div>
                 <span style="font-size: 13px; background: {ai_pred['color']}; color: white; padding: 4px 12px; border-radius: 6px; font-weight: bold;">{ai_pred['badge']}</span>
             </div>
-            <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 16px; margin-bottom: 6px;">
-                <div style="font-size: 26px; font-weight: 800; color: #0f172a;">
+            <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 16px; margin-bottom: 8px;">
+                <div style="font-size: 25px; font-weight: 800; color: #0f172a;">
                     長線超額報酬勝率：<span style="color: {ai_pred['color']};">{ai_pred['win_rate']}%</span>
                 </div>
                 <div style="font-size: 14px; font-weight: 600; color: #475569;">
                     AI 建議操作：<span style="color: {ai_pred['color']}; font-weight: 700;">{ai_pred['action_tag']}</span>
                 </div>
             </div>
-            <div style="font-size: 14px; color: #334155; line-height: 1.6; background: rgba(255,255,255,0.7); padding: 8px 12px; border-radius: 6px;">
+            <div style="font-size: 13.5px; color: #334155; line-height: 1.6; background: rgba(255,255,255,0.75); padding: 9px 12px; border-radius: 6px;">
                 <b>🎯 AI 綜合判定解析：</b>{ai_pred['rating_desc']}
             </div>
         </div>
         """, unsafe_allow_html=True)
 
     # -------------------------------------------------------------
-    # Top Information Row
+    # Top Information Row (Custom Responsive Card Matrix with ZERO truncation)
     # -------------------------------------------------------------
     if is_etf:
-        c1, c2, c3, c4 = st.columns(4)
         currency = "NT$" if etf["market"] == "TW" else "US$"
-        c1.metric("標的名稱", f"{etf['name']}")
-        c2.metric("即時市價", f"{currency} {etf['price']}", delta=f"淨值 {currency} {etf['nav']}")
         prem = etf['premium_pct']
-        c3.metric("目前折溢價率", f"{prem:+.2f}%", delta="折價便宜" if prem < 0 else "溢價注意", delta_color="normal" if prem < 0 else "inverse")
-        c4.metric("預估年化殖利率", f"{etf['div_yield']*100:.2f}%", f"配息：{etf['div_freq']}")
+        p_color = '#16a34a' if prem < 0 else ('#2563eb' if prem <= 0.3 else '#dc2626')
+        p_tag = '🟢 折價撿便宜' if prem < 0 else ('🔵 公允合理' if prem <= 0.3 else '🔴 溢價注意')
+
+        st.markdown(f"""
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 16px;">
+            <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">📦 ETF 標的名稱</div>
+                <div style="font-size: 17px; font-weight: 800; color: #0f172a; word-break: break-word; line-height: 1.3;">{etf['name']}</div>
+                <div style="font-size: 11px; color: #0284c7; margin-top: 4px; font-weight: 600;">{etf.get('category', '指數型')} ｜ {ticker}</div>
+            </div>
+            <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">💵 即時市價 (現價)</div>
+                <div style="font-size: 20px; font-weight: 800; color: #1e3a8a;">{currency} {etf['price']:,.2f}</div>
+                <div style="font-size: 11px; color: #475569; margin-top: 4px;">基準淨值 (NAV)：<b>{currency} {etf['nav']:,.2f}</b></div>
+            </div>
+            <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">⚖️ 目前折溢價率</div>
+                <div style="font-size: 20px; font-weight: 800; color: {p_color};">{prem:+.2f}%</div>
+                <div style="font-size: 11px; color: #475569; margin-top: 4px;">{p_tag}</div>
+            </div>
+            <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">💰 預估年化殖利率</div>
+                <div style="font-size: 20px; font-weight: 800; color: #0f172a;">{etf['div_yield']*100:.2f}%</div>
+                <div style="font-size: 11px; color: #0284c7; margin-top: 4px;">配息：<b>{etf['div_freq']}</b> ｜ 費率：{etf.get('expense_ratio', '0.2%')}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     else:
-        c1, c2, c3, c4, c5 = st.columns(5)
         currency = "NT$" if stock["market"] == "TW" else "US$"
-        c1.metric("標的名稱", f"{stock['name']}")
-        c2.metric("最新股價", f"{currency} {stock['price']}", f"本益比: {stock['pe']:.1f}x")
-        c3.metric("每股盈餘 (EPS)", f"{currency} {stock['eps']}", f"ROE: {stock['roe']*100:.1f}%")
         div_y_display = stock['div_yield'] if stock['div_yield'] <= 0.3 else stock['div_yield'] / 100.0
-        c4.metric("現金殖利率", f"{div_y_display*100:.2f}%", f"連續配息: {stock.get('div_years', 10)}年")
-        c5.metric("內在估值位階", status["val_status"], delta=status["action"], delta_color="normal" if "買進" in status["action"] else ("off" if "續抱" in status["action"] else "inverse"))
+
+        st.markdown(f"""
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 16px;">
+            <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">🏢 標的代號與名稱</div>
+                <div style="font-size: 17px; font-weight: 800; color: #0f172a; word-break: break-word; line-height: 1.3;">{stock['name']}</div>
+                <div style="font-size: 11px; color: #0284c7; margin-top: 4px; font-weight: 600;">{stock.get('sector', '科技')} ｜ {ticker}</div>
+            </div>
+            <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">💵 即時股價</div>
+                <div style="font-size: 20px; font-weight: 800; color: #1e3a8a;">{currency} {stock['price']:,.1f}</div>
+                <div style="font-size: 11px; color: #475569; margin-top: 4px;">本益比：<b>{stock['pe']:.1f}x</b> ｜ 市淨率：{stock.get('pb', 1.0)}x</div>
+            </div>
+            <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">📈 每股盈餘 (EPS)</div>
+                <div style="font-size: 20px; font-weight: 800; color: #0f172a;">{currency} {stock['eps']:,.2f}</div>
+                <div style="font-size: 11px; color: #16a34a; margin-top: 4px; font-weight: 600;">▲ ROE 股東報酬：<b>{stock['roe']*100:.1f}%</b></div>
+            </div>
+            <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">💰 預估現金殖利率</div>
+                <div style="font-size: 20px; font-weight: 800; color: #0f172a;">{div_y_display*100:.2f}%</div>
+                <div style="font-size: 11px; color: #0284c7; margin-top: 4px;">連續配息：<b>{stock.get('div_years', 10)} 年未間斷</b></div>
+            </div>
+            <div style="background: #ffffff; border: 1.5px solid {status['val_color']}60; border-left: 4px solid {status['val_color']}; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">⚖️ 內在估值位階</div>
+                <div style="font-size: 16px; font-weight: 800; color: {status['val_color']}; word-break: break-word;">{status['val_status']}</div>
+                <div style="font-size: 11.5px; color: {status['val_color']}; margin-top: 4px; font-weight: 600; line-height: 1.3;">{status['action']}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
     st.write("")
 
@@ -324,7 +396,7 @@ if nav_choice == "🤖 機器學習長線標的智能診斷與勝率預測 (ML I
             </div>
             """, unsafe_allow_html=True)
 
-            st.markdown("##### 🎚️ 拖動拉桿：試算不同買進市價之折溢價")
+            st.markdown("##### ⚙️ 拖動滑桿：試算不同買進市價之折溢價")
             slider_min = float(round(etf["nav"] * 0.90, 2))
             slider_max = float(round(etf["nav"] * 1.10, 2))
             step_val = 0.05 if etf["price"] < 100 else 0.5
@@ -386,7 +458,7 @@ if nav_choice == "🤖 機器學習長線標的智能診斷與勝率預測 (ML I
             """, unsafe_allow_html=True)
 
             # Interactive Slider
-            st.markdown("##### 🎚️ 拖動拉桿：試算不同買進價位之估值變化")
+            st.markdown("##### ⚙️ 拖動滑桿：試算不同買進價位之估值變化")
             slider_min = float(round(stock["cheap_price"] * 0.75, 1))
             slider_max = float(round(stock["expensive_price"] * 1.25, 1))
             step_val = 0.5 if stock["price"] < 100 else 5.0
@@ -434,7 +506,7 @@ if nav_choice == "🤖 機器學習長線標的智能診斷與勝率預測 (ML I
             st.info(f"🏰 **企業護城河（為什麼不怕對手競爭）**：\n\n{stock['moat']}")
             st.success(f"🚀 **為什麼適合長期投資？**\n\n{stock['why_buy']}")
 
-            st.markdown("##### 🤖 XAI 機器學習因子權重解釋")
+            st.markdown("##### 🧠 XAI 機器學習因子權重解釋")
             st.caption("隨機森林依據 8 大因子對該標的進行之綜合特徵加權分佈：")
             df_xai = pd.DataFrame(ai_pred["feature_contributions"])
             st.dataframe(df_xai, use_container_width=True, hide_index=True)
@@ -443,8 +515,8 @@ if nav_choice == "🤖 機器學習長線標的智能診斷與勝率預測 (ML I
 # =========================================================================
 # PAGE 2: 機器學習長線優選標的排行榜 (ML Cross-Sectional Leaderboard)
 # =========================================================================
-elif nav_choice == "🏆 機器學習長線優選標的排行榜 (ML Cross-Sectional Leaderboard)":
-    st.markdown('<div class="main-header">🏆 機器學習長線優選標的排行榜</div>', unsafe_allow_html=True)
+elif nav_choice == "🏆 全市場長線優選標的排行榜 (ML Leaderboard)":
+    st.markdown('<div class="main-header">🏆 全市場長線優選標的排行榜</div>', unsafe_allow_html=True)
     st.caption("運用 Scikit-Learn 多因子隨機森林截面排序模型，對台股與美股全市場標的進行長線超額報酬勝率評估。")
 
     col_flt1, col_flt2, col_flt3 = st.columns([1.2, 1.2, 1.6])
@@ -479,16 +551,35 @@ elif nav_choice == "🏆 機器學習長線優選標的排行榜 (ML Cross-Secti
 
     df_ranked["AI 推薦排行"] = [f"第 {i+1} 名" for i in range(len(df_ranked))]
 
-    # Metric Row
+    # Metric Row (Responsive HTML Card Grid with zero truncation)
     s_count = len(df_ranked[df_ranked["AI 評級"].str.contains("S級")])
     a_count = len(df_ranked[df_ranked["AI 評級"].str.contains("A級")])
     avg_win = df_ranked["AI 長線勝率"].mean() if not df_ranked.empty else 0.0
 
-    k1, k2, k3, k4 = st.columns(4)
-    k1.metric("評估標的總數", f"{len(df_ranked)} 檔")
-    k2.metric("🌟 S級強力推薦", f"{s_count} 檔", "勝率 ≥ 80%")
-    k3.metric("✨ A級穩健配置", f"{a_count} 檔", "勝率 65~80%")
-    k4.metric("平均 AI 預估勝率", f"{avg_win:.1f}%")
+    st.markdown(f"""
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 16px;">
+        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">📊 評估標的總數</div>
+            <div style="font-size: 22px; font-weight: 800; color: #0f172a;">{len(df_ranked)} 檔</div>
+            <div style="font-size: 11px; color: #475569; margin-top: 4px;">雙市場全面量化掃描</div>
+        </div>
+        <div style="background: #ffffff; border: 1.5px solid #86efac; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <div style="font-size: 12px; color: #166534; margin-bottom: 4px;">🌟 S級強力推薦</div>
+            <div style="font-size: 22px; font-weight: 800; color: #16a34a;">{s_count} 檔</div>
+            <div style="font-size: 11px; color: #166534; margin-top: 4px;">勝率 ≥ 80% 超額標的</div>
+        </div>
+        <div style="background: #ffffff; border: 1.5px solid #93c5fd; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <div style="font-size: 12px; color: #1e40af; margin-bottom: 4px;">✨ A級穩健配置</div>
+            <div style="font-size: 22px; font-weight: 800; color: #2563eb;">{a_count} 檔</div>
+            <div style="font-size: 11px; color: #1e40af; margin-top: 4px;">勝率 65%~80% 核心優選</div>
+        </div>
+        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">🎯 平均 AI 預估勝率</div>
+            <div style="font-size: 22px; font-weight: 800; color: #0f172a;">{avg_win:.1f}%</div>
+            <div style="font-size: 11px; color: #475569; margin-top: 4px;">全市場綜合長線超額機率</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     st.write("")
     st.subheader("🥇 AI 模型首選 Top 3 長線核心資產")
@@ -523,8 +614,8 @@ elif nav_choice == "🏆 機器學習長線優選標的排行榜 (ML Cross-Secti
 # =========================================================================
 # PAGE 3: 機器學習模型訓練、特徵工程與防過擬合實驗室 (ML Lab)
 # =========================================================================
-elif nav_choice == "🔬 機器學習模型訓練、特徵工程與防過擬合實驗室 (ML Lab & Overfitting Defense)":
-    st.markdown('<div class="main-header">🔬 機器學習模型訓練、特徵工程與防過擬合實驗室</div>', unsafe_allow_html=True)
+elif nav_choice == "🛡️ 機器學習防過擬合與驗證實驗室 (ML Lab)":
+    st.markdown('<div class="main-header">🛡️ 機器學習模型訓練、特徵工程與防過擬合實驗室</div>', unsafe_allow_html=True)
     st.caption("專題初審答辯關鍵核心：多演算法基準測試 (Multi-Model Benchmark)、5 折時間序列 Walk-Forward 交叉驗證、以及過擬合防禦架構。")
 
     diag = get_ai_model_diagnostics()
@@ -538,11 +629,32 @@ elif nav_choice == "🔬 機器學習模型訓練、特徵工程與防過擬合�
 
     st.write("")
     st.subheader("2. 防過擬合核心工程指標 (Walk-Forward Cross Validation)")
-    m_col1, m_col2, m_col3, m_col4 = st.columns(4)
-    m_col1.metric("🎯 5折時間序列交叉驗證 AUC", f"{metrics['cv_auc_mean']}")
-    m_col2.metric("🧪 盲測集 (Out-of-Sample) 準確率", f"{metrics['test_accuracy']}%")
-    m_col3.metric("📊 盲測 ROC-AUC 分數", f"{metrics['test_auc']}")
-    m_col4.metric("⚖️ 盲測 F1-Score", f"{metrics['test_f1']}")
+    
+    # Custom Responsive Metric Cards with NO ellipsis truncation
+    st.markdown(f"""
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 16px;">
+        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">🎯 5折時間序列交叉驗證 AUC</div>
+            <div style="font-size: 24px; font-weight: 800; color: #1e40af;">{metrics['cv_auc_mean']}</div>
+            <div style="font-size: 11px; color: #16a34a; margin-top: 4px; font-weight: 600;">± {metrics['cv_auc_std']} 跨週期高度穩定</div>
+        </div>
+        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">🧪 盲測集 (Out-of-Sample) 準確率</div>
+            <div style="font-size: 24px; font-weight: 800; color: #0f172a;">{metrics['test_accuracy']}%</div>
+            <div style="font-size: 11px; color: #0284c7; margin-top: 4px;">未見市場樣本泛化測試</div>
+        </div>
+        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">📊 盲測 ROC-AUC 綜合分數</div>
+            <div style="font-size: 24px; font-weight: 800; color: #0f172a;">{metrics['test_auc']}</div>
+            <div style="font-size: 11px; color: #16a34a; margin-top: 4px; font-weight: 600;">具備極高超額報酬辨識力</div>
+        </div>
+        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">⚖️ 盲測 F1-Score 調和平均</div>
+            <div style="font-size: 24px; font-weight: 800; color: #0f172a;">{metrics['test_f1']}</div>
+            <div style="font-size: 11px; color: #0284c7; margin-top: 4px;">精確率與召回率平衡度優異</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     st.write("")
     st.subheader("3. 過擬合災難實例對比 (In-Sample vs. Out-of-Sample)")
@@ -560,16 +672,20 @@ elif nav_choice == "🔬 機器學習模型訓練、特徵工程與防過擬合�
 
     c_exp1, c_exp2 = st.columns(2)
     with c_exp1:
-        st.error("""
-        🚨 **傳統時序預測的致命過擬合**：
-        高階時序模型（如高階多項式或深度 LSTM）試圖擬合每日股價，在訓練集（綠線）誤差極低；但因金融價格包含大量隨機漫步雜訊，一進入未知盲測集（紅線）直接嚴重發散！
-        """)
+        st.markdown("""
+        <div style="background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 6px; padding: 12px 14px; font-size: 13px; line-height: 1.6; color: #991b1b;">
+            <b style="font-size: 14px;">🚨 傳統時序預測的致命過擬合：</b><br>
+            高階時序模型（如高階多項式或深度 LSTM）試圖擬合每日股價，在訓練集誤差極低；但因金融價格包含大量隨機漫步雜訊，一進入未知盲測集（紅線）直接嚴重發散！
+        </div>
+        """, unsafe_allow_html=True)
     with c_exp2:
-        st.success("""
-        ✅ **本專案採用的三大防過擬合策略**：
-        1. **問題重構**：放棄預測每日點位，改為預測「截面超額報酬機率」。<br>
-        2. **剪枝與正則化**：隨機森林限定樹深 (`max_depth=5`)，葉節點最小樣本數 (`min_samples_leaf=10`)，遏制孤立雜訊記憶。<br>
-        3. **Walk-Forward 交叉驗證**：嚴格依時間順序驗證，徹底防範未來資訊洩漏 (Data Snooping)。
+        st.markdown("""
+        <div style="background: #ecfdf5; border-left: 4px solid #10b981; border-radius: 6px; padding: 12px 14px; font-size: 13px; line-height: 1.6; color: #065f46;">
+            <b style="font-size: 14px;">✅ 本專案採用的三大防過擬合策略：</b><br>
+            1. <b>問題重構</b>：放棄預測每日點位，改為預測「截面超額報酬機率」。<br>
+            2. <b>剪枝與正則化</b>：隨機森林限定樹深 (<code>max_depth=5</code>)，葉節點最小樣本數 (<code>min_samples_leaf=10</code>)，遏制孤立雜訊記憶。<br>
+            3. <b>Walk-Forward 交叉驗證</b>：嚴格依時間順序驗證，徹底防範未來資訊洩漏 (Data Snooping)。
+        </div>
         """, unsafe_allow_html=True)
 
     st.write("")
@@ -590,7 +706,7 @@ elif nav_choice == "🔬 機器學習模型訓練、特徵工程與防過擬合�
 # =========================================================================
 # PAGE 4: 台美熱門 ETF 存股指南（市值型 ✕ 高股息 ✕ 費率對決）
 # =========================================================================
-elif nav_choice == "📦 台美熱門 ETF 存股指南（市值型 ✕ 高股息 ✕ 費率對決）":
+elif nav_choice == "📦 台美熱門 ETF 存股指南 (市值型 ✕ 高股息 ✕ 費率對決)":
     st.markdown('<div class="main-header">📦 台美熱門 ETF 存股指南（市值型 ✕ 高股息 ✕ 費率大對決）</div>', unsafe_allow_html=True)
     st.write("投資個股需要持續追蹤單一公司的財報與護城河；**ETF（指數股票型基金）**則是一次買進一籃子優質企業，具備**『自動汰弱留強、永遠不會倒閉、省時省力』**的長線存股優勢！")
 
@@ -656,7 +772,7 @@ elif nav_choice == "📦 台美熱門 ETF 存股指南（市值型 ✕ 高股息
 # =========================================================================
 # PAGE 5: 台股高息「存股專區」（買了放著安心領利息）
 # =========================================================================
-elif nav_choice == "💰 台股高息「存股專區」（買了放著安心領利息）":
+elif nav_choice == "💰 台股高息「存股專區」 (買了放著安心領利息)":
     st.markdown('<div class="main-header">💰 台股穩定高息「存股專區」（買了放著安心領利息）</div>', unsafe_allow_html=True)
     st.write("台灣投資人最熱愛的**「存股領息」**哲學！挑選存股標的不能只看殖利率高低，必須符合三大標準：")
     
