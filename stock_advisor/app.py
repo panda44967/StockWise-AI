@@ -55,14 +55,40 @@ st.set_page_config(
 # Custom CSS styling with font fallbacks and anti-truncation rules
 st.markdown("""
 <style>
-    /* Robust unicode font fallback stack without breaking Streamlit icon fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
+    /* Clean font fallback stack for standard text */
     html, body, .stApp {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", "PingFang TC", "Microsoft JhengHei", "微軟正黑體", sans-serif;
     }
 
-    /* Prevent custom font from breaking Streamlit's internal icon fonts and SVG toggles */
-    [data-testid*="Icon"], [data-testid="stExpanderToggleIcon"], .material-symbols-rounded, svg {
-        font-family: inherit !important;
+    /* Force Material Symbols Rounded font and ligature rendering for all Streamlit icon elements */
+    [data-testid="stIconMaterial"],
+    [data-testid*="stIcon"],
+    [data-testid*="Icon"],
+    .material-symbols-rounded,
+    [class*="stIcon"] {
+        font-family: 'Material Symbols Rounded' !important;
+        font-weight: normal !important;
+        font-style: normal !important;
+        font-size: 1.25rem !important;
+        line-height: 1 !important;
+        letter-spacing: normal !important;
+        text-transform: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: nowrap !important;
+        word-wrap: normal !important;
+        direction: ltr !important;
+        -webkit-font-feature-settings: 'liga' 1 !important;
+        font-feature-settings: 'liga' 1 !important;
+        -webkit-font-smoothing: antialiased !important;
+        overflow: hidden !important;
+        width: 1.25rem !important;
+        min-width: 1.25rem !important;
+        max-width: 1.25rem !important;
+        margin-right: 6px !important;
     }
 
     /* Ensure expander toggle headers have neat alignment and gap without text overlap */
@@ -73,7 +99,7 @@ st.markdown("""
     }
     div[data-testid="stExpander"] details summary p {
         margin: 0 !important;
-        padding-left: 4px !important;
+        padding-left: 2px !important;
     }
 
     /* Force all Streamlit metrics and headers to wrap naturally and NEVER truncate with ellipsis */
