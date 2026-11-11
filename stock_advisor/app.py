@@ -55,9 +55,25 @@ st.set_page_config(
 # Custom CSS styling with font fallbacks and anti-truncation rules
 st.markdown("""
 <style>
-    /* Robust unicode font fallback stack ensuring no broken glyphs or tofu boxes */
-    html, body, [class*="css"], [class*="st-"] {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", "PingFang TC", "Microsoft JhengHei", "微軟正黑體", sans-serif !important;
+    /* Robust unicode font fallback stack without breaking Streamlit icon fonts */
+    html, body, .stApp {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", "PingFang TC", "Microsoft JhengHei", "微軟正黑體", sans-serif;
+    }
+
+    /* Prevent custom font from breaking Streamlit's internal icon fonts and SVG toggles */
+    [data-testid*="Icon"], [data-testid="stExpanderToggleIcon"], .material-symbols-rounded, svg {
+        font-family: inherit !important;
+    }
+
+    /* Ensure expander toggle headers have neat alignment and gap without text overlap */
+    div[data-testid="stExpander"] details summary {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+    div[data-testid="stExpander"] details summary p {
+        margin: 0 !important;
+        padding-left: 4px !important;
     }
 
     /* Force all Streamlit metrics and headers to wrap naturally and NEVER truncate with ellipsis */
@@ -722,6 +738,24 @@ elif nav_choice == "🛡️ 機器學習防過擬合與驗證實驗室 (ML Lab)"
     fig_imp.update_layout(height=320, margin=dict(l=10, r=10, t=10, b=10))
     st.plotly_chart(fig_imp, use_container_width=True)
 
+    st.write("")
+    st.subheader("5. 系統資安防禦強化 (G5)、即時稽核日誌 (G6) 與健康探針 (G7)")
+    st.caption("符合 NTUB 實務專題資安防護規範：嚴格白名單輸入檢驗、XSS HTML 實體轉義、零個資/零金鑰洩漏風險、以及生產環境日誌稽核。")
+
+    sec_rep = get_system_security_report()
+    s1, s2, s3, s4 = st.columns(4)
+    s1.success(f"**輸入正則白名單**\n\n{sec_rep['input_validation']}")
+    s2.info(f"**XSS / 注入防禦**\n\n{sec_rep['xss_defense']}")
+    s3.warning(f"**零個資儲存 (PII)**\n\n無狀態地端隔離")
+    s4.success(f"**API 金鑰洩漏風險**\n\n{sec_rep['api_leak_risk']}")
+
+    st.write("")
+    st.markdown("##### 📋 即時系統運作與安全稽核日誌 (Audit Logs - G6)")
+    st.caption("系統後端記憶體環形緩衝區（Ring Buffer）自動記錄之即時安全日誌：")
+    recent_logs = get_security_logger().get_recent_logs(limit=15)
+    df_logs = pd.DataFrame(recent_logs)[["timestamp", "category", "level", "message"]]
+    st.dataframe(df_logs, use_container_width=True, hide_index=True)
+
 
 # =========================================================================
 # PAGE 4: 台美熱門 ETF 存股指南（市值型 ✕ 高股息 ✕ 費率對決）
@@ -822,24 +856,3 @@ elif nav_choice == "💰 台股高息「存股專區」 (買了放著安心領�
         
     with st.expander("Q2：存股什麼時候買最好？一定要等便宜價嗎？"):
         st.write("答：存股族最佳策略是『**定期定額＋拉回大跌時加碼**』。當股價落在合理偏低或便宜價時，殖利率會被放大（例如兆豐金跌至 36 元以下時殖利率破 5%），此時是擴大本金持股部位的最佳時機。")
-
-
-# =========================================================================
-# G5 / G6 / G7: 專題初審資安強化、即時稽核日誌與系統健全性面板
-# =========================================================================
-st.write("")
-st.divider()
-with st.expander("🛡️ 專題審查專用：系統資安防禦強化 (G5)、即時稽核日誌 (G6) 與健康探針 (G7)", expanded=False):
-    st.markdown("##### 🔒 資安防禦機制符合性 (Security & Hardening Checklist - G5)")
-    sec_rep = get_system_security_report()
-    s1, s2, s3, s4 = st.columns(4)
-    s1.success(f"**輸入正則白名單**\n\n{sec_rep['input_validation']}")
-    s2.info(f"**XSS / 注入防禦**\n\n{sec_rep['xss_defense']}")
-    s3.warning(f"**零個資儲存 (PII)**\n\n無狀態地端隔離")
-    s4.success(f"**API 金鑰洩漏風險**\n\n{sec_rep['api_leak_risk']}")
-
-    st.markdown("##### 📋 即時系統運作與安全稽核日誌 (Audit Logs - G6)")
-    st.caption("系統後端記憶體環形緩衝區（Ring Buffer）自動記錄之即時安全日誌：")
-    recent_logs = get_security_logger().get_recent_logs(limit=15)
-    df_logs = pd.DataFrame(recent_logs)[["timestamp", "category", "level", "message"]]
-    st.dataframe(df_logs, use_container_width=True, hide_index=True)
