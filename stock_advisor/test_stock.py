@@ -11,7 +11,7 @@ from stock_advisor.engine import (
     get_stock_profile, get_historical_candles, evaluate_investment_status,
     get_high_dividend_stocks, get_industry_recommendations,
     simulate_overfitting_comparison, is_etf_ticker, get_etf_profile,
-    get_all_etfs, MARKET_DATA, ETF_DATA
+    get_all_etfs, calculate_portfolio_allocation, MARKET_DATA, ETF_DATA
 )
 from stock_advisor.ml_model import predict_stock_ai, get_ai_model_diagnostics, rank_universe_stocks
 
@@ -177,6 +177,23 @@ class TestStockWise(unittest.TestCase):
         logger = get_security_logger()
         logs = logger.get_recent_logs()
         self.assertGreater(len(logs), 0)
+
+    def test_portfolio_budget_allocation(self):
+        # 1. Test TW Portfolio allocation
+        plan_tw = calculate_portfolio_allocation(500000, 3, "穩健平衡型", "TW")
+        self.assertEqual(plan_tw["budget"], 500000)
+        self.assertEqual(len(plan_tw["plan_table"]), 4)
+        self.assertGreater(plan_tw["total_allocated"], 450000)
+        self.assertGreater(plan_tw["expected_annual_dividend"], 5000)
+        self.assertGreater(plan_tw["compounded_future_value"], 500000)
+        self.assertIn("建議下單數量", plan_tw["plan_table"][0])
+
+        # 2. Test US Portfolio allocation
+        plan_us = calculate_portfolio_allocation(20000, 5, "積極成長型", "US")
+        self.assertEqual(plan_us["budget"], 20000)
+        self.assertEqual(len(plan_us["plan_table"]), 4)
+        self.assertGreater(plan_us["total_allocated"], 18000)
+        self.assertGreater(plan_us["compounded_future_value"], 20000)
 
 if __name__ == "__main__":
     unittest.main()

@@ -643,3 +643,134 @@ def simulate_overfitting_comparison():
         "Dataset": ["Training In-Sample" if i < train_size else "Blind Test Out-of-Sample" for i in range(n_days)]
     })
     return df, train_size
+
+
+def calculate_portfolio_allocation(
+    total_budget: float,
+    horizon_years: int = 3,
+    risk_profile: str = "穩健平衡型 (Core-Satellite Balanced)",
+    market: str = "TW"
+) -> dict:
+    """
+    Calculate actionable portfolio budget allocation based on Core-Satellite principles.
+    Satisfies academic requirement for actionable position sizing & budget allocation.
+    """
+    if market == "TW":
+        currency_sym = "NT$"
+        is_tw = True
+        if "積極" in risk_profile:
+            weights = [
+                {"role": "【核心穩健層】市值旗艦", "ticker": "0050.TW", "name": "元大台灣50", "ratio": 0.35, "exp_return": 0.11},
+                {"role": "【收息防禦層】高息金控", "ticker": "2886.TW", "name": "兆豐金", "ratio": 0.15, "exp_return": 0.08},
+                {"role": "【AI衛星攻擊】半導體龍頭", "ticker": "2330.TW", "name": "台積電", "ratio": 0.30, "exp_return": 0.18},
+                {"role": "【AI衛星攻擊】IC設計龍頭", "ticker": "2454.TW", "name": "聯發科", "ratio": 0.20, "exp_return": 0.16},
+            ]
+        elif "退休" in risk_profile or "保守" in risk_profile:
+            weights = [
+                {"role": "【核心穩健層】市值旗艦", "ticker": "0050.TW", "name": "元大台灣50", "ratio": 0.25, "exp_return": 0.10},
+                {"role": "【收息防禦層】存股官股金控", "ticker": "2886.TW", "name": "兆豐金", "ratio": 0.35, "exp_return": 0.085},
+                {"role": "【收息防禦層】高息ETF旗艦", "ticker": "0056.TW", "name": "元大高股息", "ratio": 0.25, "exp_return": 0.08},
+                {"role": "【AI衛星攻擊】全球晶圓霸主", "ticker": "2330.TW", "name": "台積電", "ratio": 0.15, "exp_return": 0.18},
+            ]
+        else: # 穩健平衡型
+            weights = [
+                {"role": "【核心穩健層】市值旗艦", "ticker": "0050.TW", "name": "元大台灣50", "ratio": 0.45, "exp_return": 0.11},
+                {"role": "【收息防禦層】官股金控首選", "ticker": "2886.TW", "name": "兆豐金", "ratio": 0.20, "exp_return": 0.085},
+                {"role": "【AI衛星攻擊】全球晶圓霸主", "ticker": "2330.TW", "name": "台積電", "ratio": 0.25, "exp_return": 0.18},
+                {"role": "【AI衛星攻擊】AI伺服器代工", "ticker": "2317.TW", "name": "鴻海", "ratio": 0.10, "exp_return": 0.14},
+            ]
+    else: # US Market
+        currency_sym = "US$"
+        is_tw = False
+        if "積極" in risk_profile:
+            weights = [
+                {"role": "【核心穩健層】標普500旗艦", "ticker": "VOO", "name": "Vanguard S&P 500", "ratio": 0.40, "exp_return": 0.11},
+                {"role": "【收息防禦層】股息成長貴族", "ticker": "SCHD", "name": "Schwab US Dividend", "ratio": 0.15, "exp_return": 0.085},
+                {"role": "【AI衛星攻擊】全球算力霸主", "ticker": "NVDA", "name": "NVIDIA", "ratio": 0.25, "exp_return": 0.22},
+                {"role": "【AI衛星攻擊】企業雲端生態", "ticker": "MSFT", "name": "Microsoft", "ratio": 0.20, "exp_return": 0.16},
+            ]
+        elif "退休" in risk_profile or "保守" in risk_profile:
+            weights = [
+                {"role": "【核心穩健層】全美市場全包", "ticker": "VTI", "name": "Vanguard Total Stock", "ratio": 0.30, "exp_return": 0.10},
+                {"role": "【收息防禦層】股息成長貴族", "ticker": "SCHD", "name": "Schwab US Dividend", "ratio": 0.40, "exp_return": 0.085},
+                {"role": "【收息防禦層】62年股息之王", "ticker": "JNJ", "name": "Johnson & Johnson", "ratio": 0.15, "exp_return": 0.075},
+                {"role": "【AI衛星攻擊】全球軟體霸主", "ticker": "MSFT", "name": "Microsoft", "ratio": 0.15, "exp_return": 0.16},
+            ]
+        else: # 穩健平衡型
+            weights = [
+                {"role": "【核心穩健層】標普500旗艦", "ticker": "VOO", "name": "Vanguard S&P 500", "ratio": 0.50, "exp_return": 0.11},
+                {"role": "【收息防禦層】股息成長貴族", "ticker": "SCHD", "name": "Schwab US Dividend", "ratio": 0.20, "exp_return": 0.085},
+                {"role": "【AI衛星攻擊】全球算力霸主", "ticker": "NVDA", "name": "NVIDIA", "ratio": 0.15, "exp_return": 0.22},
+                {"role": "【AI衛星攻擊】消費科技生態", "ticker": "AAPL", "name": "Apple", "ratio": 0.15, "exp_return": 0.15},
+            ]
+
+    # Calculate actual lots, shares, dividends, and values
+    plan_rows = []
+    total_allocated = 0.0
+    total_expected_div = 0.0
+    weighted_return = 0.0
+
+    for item in weights:
+        t = item["ticker"]
+        if is_etf_ticker(t):
+            p_data = get_etf_profile(t)
+            price = p_data["price"]
+            div_yield = p_data["div_yield"]
+        else:
+            p_data = get_stock_profile(t)
+            price = p_data["price"]
+            div_yield = p_data["div_yield"]
+            if div_yield > 0.3:
+                div_yield = div_yield / 100.0
+
+        target_amt = total_budget * item["ratio"]
+        if price <= 0:
+            price = 100.0
+        
+        shares = int(target_amt // price)
+        actual_amt = shares * price
+        total_allocated += actual_amt
+
+        annual_div_per_share = price * div_yield
+        total_div = shares * annual_div_per_share
+        total_expected_div += total_div
+        weighted_return += item["ratio"] * item["exp_return"]
+
+        if is_tw:
+            lots = shares // 1000
+            odd = shares % 1000
+            order_desc = f"{lots} 張 + {odd} 股" if lots > 0 else f"{odd} 股 (零股下單)"
+        else:
+            order_desc = f"{shares} 股 (Shares)"
+
+        plan_rows.append({
+            "配置角色": item["role"],
+            "標的代號": t,
+            "企業/基金名稱": item["name"],
+            "目標權重": f"{item['ratio']*100:.0f}%",
+            "現價": f"{currency_sym} {price:,.1f}",
+            "分配預算": f"{currency_sym} {target_amt:,.0f}",
+            "建議下單數量": order_desc,
+            "實際運用資金": f"{currency_sym} {actual_amt:,.0f}",
+            "預估年配息": f"{currency_sym} {total_div:,.0f}",
+            "預期年化報酬": f"{item['exp_return']*100:.1f}%"
+        })
+
+    remaining_cash = total_budget - total_allocated
+    compounded_future_value = total_budget * ((1 + weighted_return) ** horizon_years)
+    total_dividend_over_horizon = total_expected_div * horizon_years
+
+    return {
+        "budget": total_budget,
+        "market": market,
+        "currency_sym": currency_sym,
+        "plan_table": plan_rows,
+        "total_allocated": total_allocated,
+        "remaining_cash": remaining_cash,
+        "expected_annual_dividend": total_expected_div,
+        "portfolio_div_yield": (total_expected_div / total_budget * 100) if total_budget > 0 else 0.0,
+        "weighted_annual_return": weighted_return * 100,
+        "horizon_years": horizon_years,
+        "compounded_future_value": compounded_future_value,
+        "total_dividend_over_horizon": total_dividend_over_horizon
+    }
