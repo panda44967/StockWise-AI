@@ -144,8 +144,37 @@ st.markdown("""
         border-radius: 8px;
         margin-bottom: 12px;
     }
+
+    /* iPad and Tablet RWD Enhancements */
+    @media (max-width: 1024px) {
+        .main-header {
+            font-size: 20px !important;
+        }
+        div[data-testid="stMetricValue"] {
+            font-size: 1.1rem !important;
+        }
+        button[kind="secondary"], button[kind="primary"] {
+            min-height: 42px !important;
+            font-size: 14px !important;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
+
+# Navigation Page Registry
+NAV_PAGES = [
+    "🎯 AI 標的智能診斷與勝率推論 (ML Inference)",
+    "🏆 全市場長線優選標的排行榜 (ML Leaderboard)",
+    "🛡️ 機器學習防過擬合與驗證實驗室 (ML Lab)",
+    "📦 台美熱門 ETF 存股指南 (市值型 ✕ 高股息 ✕ 費率對決)",
+    "💰 台股高息「存股專區」 (買了放著安心領利息)"
+]
+
+if "nav_page" not in st.session_state:
+    st.session_state.nav_page = NAV_PAGES[0]
+
+def on_nav_change():
+    st.session_state.nav_page = st.session_state.nav_radio
 
 # Sidebar
 st.sidebar.markdown("""
@@ -158,14 +187,12 @@ st.sidebar.caption("多因子機器學習預測 ✕ 長期價值投資決策平�
 
 nav_choice = st.sidebar.radio(
     "功能導覽",
-    [
-        "🎯 AI 標的智能診斷與勝率推論 (ML Inference)",
-        "🏆 全市場長線優選標的排行榜 (ML Leaderboard)",
-        "🛡️ 機器學習防過擬合與驗證實驗室 (ML Lab)",
-        "📦 台美熱門 ETF 存股指南 (市值型 ✕ 高股息 ✕ 費率對決)",
-        "💰 台股高息「存股專區」 (買了放著安心領利息)"
-    ]
+    NAV_PAGES,
+    index=NAV_PAGES.index(st.session_state.nav_page) if st.session_state.nav_page in NAV_PAGES else 0,
+    key="nav_radio",
+    on_change=on_nav_change
 )
+st.session_state.nav_page = nav_choice
 
 st.sidebar.divider()
 st.sidebar.info("""
@@ -182,6 +209,42 @@ st.sidebar.markdown("""
     📚 主軸：<b>機器學習預測台美雙市場長期投資標的</b>
 </div>
 """, unsafe_allow_html=True)
+
+# =========================================================================
+# 🎓 課堂期中驗收 1-Click 快速 Demo 面板 (Classroom Demo Entrance)
+# =========================================================================
+st.markdown("""
+<div style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: white; border-radius: 10px; padding: 14px 18px; margin-bottom: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div>
+            <div style="font-size: 11px; font-weight: 700; color: #93c5fd; letter-spacing: 1px; margin-bottom: 2px;">🎓 NTUB 人工智慧科技應用學士後專班 ｜ 期中驗收展示系統</div>
+            <div style="font-size: 18px; font-weight: 800; color: #ffffff;">StockWise-AI 多因子機器學習長線投資決策系統</div>
+            <div style="font-size: 12px; color: #e0e7ff; margin-top: 2px;">
+                <b>主軸</b>：以 8 大基本面因果特徵預測長線超額報酬（Alpha 勝率），徹底解決高頻時序過擬合（Overfitting）陷阱。
+            </div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; padding: 6px 10px; font-size: 11px; text-align: right;">
+            <b>專題作者</b>：張琬婷 (<code>p1146106</code>)<br>
+            <span style="color: #86efac; font-weight: 700;">● 雲端正式運行中 ｜ 零個資安全防禦</span>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+with st.container():
+    st.markdown("<b>⚡ 課堂現場 1-Click 直覺互動展示入口 (Professor iPad / Desktop Demo)：</b>", unsafe_allow_html=True)
+    c_d1, c_d2, c_d3 = st.columns(3)
+    if c_d1.button("🎯 Demo 1：台積電 AI 診斷 ＆ 8大因子權重 (XAI)", use_container_width=True):
+        st.session_state.nav_page = NAV_PAGES[0]
+        st.session_state.demo_target = "2330.TW"
+        st.rerun()
+    if c_d2.button("🏆 Demo 2：全市場長線 S 級標的排行榜 (截面排序)", use_container_width=True):
+        st.session_state.nav_page = NAV_PAGES[1]
+        st.rerun()
+    if c_d3.button("🛡️ Demo 3：5折時間序列交叉驗證 ＆ 防過擬合實驗室", use_container_width=True):
+        st.session_state.nav_page = NAV_PAGES[2]
+        st.rerun()
+st.write("")
 
 # =========================================================================
 # PAGE 1: 機器學習長線標的智能診斷與勝率預測 (ML Inference & XAI)
@@ -207,6 +270,8 @@ if nav_choice == "🎯 AI 標的智能診斷與勝率推論 (ML Inference)":
             ]
             selected_label = st.selectbox("熱門台股個股快速選", quick_options)
             default_t = selected_label.split(" - ")[0]
+            if st.session_state.get("demo_target"):
+                default_t = st.session_state.pop("demo_target")
             ticker_input = st.text_input("或自訂台股代號（例：2308.TW, 2412.TW）", value=default_t)
         elif market_mode == "📦 台灣熱門 ETF":
             quick_options = [
