@@ -435,6 +435,7 @@ def get_stock_profile(ticker: str) -> dict:
             exp_p = round(fair_p * 1.20, 1)
 
             return {
+                "ticker": clean_ticker,
                 "name": base["name"] if base else info.get("shortName", clean_ticker),
                 "market": "TW" if ".TW" in clean_ticker else "US",
                 "sector": base["sector"] if base else info.get("sector", "綜合產業"),
@@ -460,9 +461,11 @@ def get_stock_profile(ticker: str) -> dict:
 
     # PRIORITY 2: Fallback to cached profile if yfinance is unreachable
     if base:
-        return base
+        base_copy = dict(base)
+        base_copy["ticker"] = clean_ticker
+        return base_copy
         
-    return MARKET_DATA["2330.TW"]
+    return None
 
 def get_historical_candles(ticker: str, period: str = "1y") -> pd.DataFrame:
     """Get live historical OHLCV data with Moving Averages."""
@@ -482,6 +485,8 @@ def get_historical_candles(ticker: str, period: str = "1y") -> pd.DataFrame:
     
     # Fallback to simulated profile based on current price
     profile = get_stock_profile(clean_ticker)
+    if not profile:
+        return pd.DataFrame()
     curr_p = profile["price"]
     n_days = 250
     dates = pd.date_range(end=pd.Timestamp.now(), periods=n_days)
