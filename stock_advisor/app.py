@@ -334,8 +334,28 @@ if nav_choice == "🎯 AI 標的智能診斷與勝率推論 (ML Inference)":
         else:
             stock = get_stock_profile(ticker)
             etf = None
-            status = evaluate_investment_status(stock)
-            ai_pred = predict_stock_ai(stock)
+            if stock:
+                status = evaluate_investment_status(stock)
+                ai_pred = predict_stock_ai(stock)
+            else:
+                status = None
+                ai_pred = None
+
+    if not is_etf and not stock:
+        st.error(f"❌ 查無標的代號「{ticker}」之即時行情與基本面數據！")
+        st.info('''
+💡 **代號輸入指引**：
+• **台積電正確代號**為 **`2330`** 或 **`2330.TW`**（非 2300）。
+• **台股個股**：請輸入標準 4 位股票代號，例如 `2330.TW` (台積電)、`2454.TW` (聯發科)、`2317.TW` (鴻海)。
+• **美股個股**：請輸入標準代碼，例如 `AAPL`、`NVDA`、`MSFT`、`TSLA`。
+• **ETF 標的**：請輸入如 `0050.TW`、`00878.TW` 或切換上方市場模式至「台灣熱門 ETF」。
+• 您也可以直接點選上方「熱門快速選」下拉選單選取標的。
+''')
+        st.stop()
+
+    if is_etf and not etf:
+        st.error(f"❌ 查無 ETF 代號「{ticker}」之數據，請檢查代號是否正確。")
+        st.stop()
 
     # -------------------------------------------------------------
     # HERO 1: AI 機器學習長線勝率推論結果 (僅個股顯示)
@@ -420,7 +440,7 @@ if nav_choice == "🎯 AI 標的智能診斷與勝率推論 (ML Inference)":
             <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
                 <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">🏢 標的代號與名稱</div>
                 <div style="font-size: 17px; font-weight: 800; color: #0f172a; word-break: break-word; line-height: 1.3;">{stock['name']}</div>
-                <div style="font-size: 11px; color: #0284c7; margin-top: 4px; font-weight: 600;">{stock.get('sector', '科技')} ｜ {ticker}</div>
+                <div style="font-size: 11px; color: #0284c7; margin-top: 4px; font-weight: 600;">{stock.get('sector', '科技')} ｜ {stock.get('ticker', ticker)}</div>
             </div>
             <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
                 <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">💵 即時股價</div>
