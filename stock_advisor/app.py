@@ -163,9 +163,10 @@ st.markdown("""
 
 # Navigation Page Registry
 NAV_PAGES = [
-    "💼 上班族資金分配計算機 (我有XX萬該怎麼買？)",
-    "🎯 股票/ETF 健檢與預約掛單試算 (通勤掛單神器)",
-    "🏆 上班族精選存股排行榜 (體質最好 ✕ 安心領息)",
+    "🎯 AI 標的智能診斷與勝率推論 (ML Inference)",
+    "🏆 全市場長線優選標的排行榜 (ML Leaderboard)",
+    "🛡️ 機器學習防過擬合與驗證實驗室 (ML Lab)",
+    "💼 個人化資金配置與預算試算 (Portfolio Planner)",
     "📦 台美熱門 ETF 存股指南 (市值型 ✕ 高股息 ✕ 費率對決)",
     "💰 台股高息「存股專區」 (買了放著安心領利息)"
 ]
@@ -183,7 +184,7 @@ st.sidebar.markdown("""
     <span style="font-size: 20px; font-weight: 800; color: #0f172a;">StockWise</span>
 </div>
 """, unsafe_allow_html=True)
-st.sidebar.caption("上班族忙碌存股與資金分配小幫手 ✕ 通勤預約掛單")
+st.sidebar.caption("多因子機器學習預測 ✕ 長期價值投資決策平台")
 
 nav_choice = st.sidebar.radio(
     "功能導覽",
@@ -196,11 +197,9 @@ st.session_state.nav_page = nav_choice
 
 st.sidebar.divider()
 st.sidebar.info("""
-💡 **專案初衷與理念**：
-專為平常忙碌、沒時間研究股票或看盤的上班族量身打造！
-• **我有預算怎麼買**：一鍵試算 0050、高股息與龍頭股該買幾張與預算分配。
-• **通勤預約掛單**：前一晚或早上搭車前預約便宜價掛單，買到算撿便宜，沒買到不追高！
-• **8大財務體質把關**：由機器學習模型綜合評分，排除短線市場隨機雜訊。
+💡 **學術核心理念**：
+短期股價受隨機漫步與市場情緒干擾，傳統高頻時序模型極易**過擬合**。
+本專案採用**截面多因子機器學習模型（隨機森林與 GBDT）**，以企業真實賺錢體質為核心，預測 1 年期超越基準指數之勝率（Alpha Outperformance）。
 """)
 
 st.sidebar.markdown("""
@@ -219,10 +218,10 @@ st.markdown("""
 <div style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: white; border-radius: 10px; padding: 14px 18px; margin-bottom: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
         <div>
-            <div style="font-size: 11px; font-weight: 700; color: #93c5fd; letter-spacing: 1px; margin-bottom: 2px;">🎓 NTUB 人工智慧科技應用學士後專班 ｜ 實務專題系統</div>
-            <div style="font-size: 18px; font-weight: 800; color: #ffffff;">StockWise：忙碌上班族的長線存股與資金分配小幫手</div>
+            <div style="font-size: 11px; font-weight: 700; color: #93c5fd; letter-spacing: 1px; margin-bottom: 2px;">🎓 NTUB 人工智慧科技應用學士後專班 ｜ 期中驗收展示系統</div>
+            <div style="font-size: 18px; font-weight: 800; color: #ffffff;">StockWise-AI 多因子機器學習長線投資決策系統</div>
             <div style="font-size: 12px; color: #e0e7ff; margin-top: 2px;">
-                <b>主軸</b>：一筆資金試算各買幾張 ✕ 通勤前一晚預約掛單指引 ✕ 8 大財務體質 AI 把關。
+                <b>主軸</b>：以 8 大基本面因果特徵預測長線超額報酬（Alpha 勝率），徹底解決高頻時序過擬合（Overfitting）陷阱。
             </div>
         </div>
         <div style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; padding: 6px 10px; font-size: 11px; text-align: right;">
@@ -236,138 +235,23 @@ st.markdown("""
 with st.container():
     st.markdown("<b>⚡ 課堂現場 1-Click 直覺互動展示入口 (Professor iPad / Desktop Demo)：</b>", unsafe_allow_html=True)
     c_d1, c_d2, c_d3 = st.columns(3)
-    if c_d1.button("💼 Demo 1：50萬/100萬 資金預算最佳化配置 (採購下單表)", use_container_width=True):
+    if c_d1.button("🎯 Demo 1：台積電 AI 勝率 ＆ 8大因子金融學理 (XAI)", use_container_width=True):
         st.session_state.nav_page = NAV_PAGES[0]
-        st.rerun()
-    if c_d2.button("🎯 Demo 2：台積電 / 0050 健檢與通勤預約掛單 (掛單指引)", use_container_width=True):
-        st.session_state.nav_page = NAV_PAGES[1]
         st.session_state.demo_target = "2330.TW"
         st.rerun()
-    if c_d3.button("🏆 Demo 3：上班族精選存股排行榜 (安心領息清單)", use_container_width=True):
+    if c_d2.button("💼 Demo 2：50萬/100萬 資金預算最佳化配置 (實戰下單表)", use_container_width=True):
+        st.session_state.nav_page = NAV_PAGES[3]
+        st.rerun()
+    if c_d3.button("🛡️ Demo 3：5折時間序列交叉驗證 ＆ 防過擬合實驗室", use_container_width=True):
         st.session_state.nav_page = NAV_PAGES[2]
         st.rerun()
 st.write("")
 
 # =========================================================================
-# PAGE 4: 個人化資金配置與預算試算 (Portfolio Planner)
-# =========================================================================
-if nav_choice == NAV_PAGES[0]:
-    st.markdown('<div class="main-header">💼 上班族資金分配計算機（我有XX萬該怎麼買？）</div>', unsafe_allow_html=True)
-    st.caption("直接回應期中評審核心要求：給予具體預算與投資年限，系統依據『核心-衛星 (Core-Satellite) 資產配置演算法』自動試算精確購買張數、零股股數與預估被動現金流。")
-
-    col_m_plan, col_b_plan, col_h_plan = st.columns([1, 1.4, 1.2])
-    with col_m_plan:
-        plan_market = st.radio("選擇投資市場", ["🇹🇼 台股市場 (新台幣 NT$)", "🇺🇸 美股市場 (美元 US$)"])
-        m_code = "TW" if "台股" in plan_market else "US"
-        c_sym = "NT$" if m_code == "TW" else "US$"
-    
-    with col_b_plan:
-        default_budget = 500000.0 if m_code == "TW" else 20000.0
-        budget_options = [100000, 300000, 500000, 1000000, 2000000] if m_code == "TW" else [5000, 10000, 20000, 50000, 100000]
-        st.write("快捷預算選擇：")
-        qb_cols = st.columns(len(budget_options))
-        for i, b_val in enumerate(budget_options):
-            b_label = f"{b_val//10000}萬" if m_code == "TW" else f"${b_val//1000}k"
-            if qb_cols[i].button(b_label, key=f"btn_b_{b_val}"):
-                st.session_state["plan_custom_budget"] = float(b_val)
-        
-        custom_b = st.number_input(
-            f"或自訂總投入資金預算 ({c_sym})：",
-            min_value=10000.0 if m_code == "TW" else 500.0,
-            max_value=50000000.0 if m_code == "TW" else 1000000.0,
-            value=float(st.session_state.get("plan_custom_budget", default_budget)),
-            step=50000.0 if m_code == "TW" else 1000.0
-        )
-    
-    with col_h_plan:
-        plan_risk = st.selectbox(
-            "風險屬性與配置策略",
-            [
-                "穩健平衡型 (Core-Satellite Balanced)",
-                "積極成長型 (Growth Alpha Aggressive)",
-                "退休收息型 (Income Conservative)"
-            ]
-        )
-        plan_horizon = st.slider("預計投資年限 (年)", min_value=1, max_value=10, value=3)
-
-    plan_res = calculate_portfolio_allocation(
-        total_budget=custom_b,
-        horizon_years=plan_horizon,
-        risk_profile=plan_risk,
-        market=m_code
-    )
-
-    # 4 Metric Cards (Zero Truncation Grid)
-    st.markdown(f"""
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 14px; margin-bottom: 16px;">
-        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">💰 總投資預算</div>
-            <div style="font-size: 22px; font-weight: 800; color: #0f172a;">{c_sym} {plan_res['budget']:,.0f}</div>
-            <div style="font-size: 11px; color: #16a34a; margin-top: 4px;">實際已運用 {c_sym} {plan_res['total_allocated']:,.0f}</div>
-        </div>
-        <div style="background: #ffffff; border: 1.5px solid #86efac; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-            <div style="font-size: 12px; color: #166534; margin-bottom: 4px;">💵 預估年領被動現金流</div>
-            <div style="font-size: 22px; font-weight: 800; color: #16a34a;">{c_sym} {plan_res['expected_annual_dividend']:,.0f}</div>
-            <div style="font-size: 11px; color: #166534; margin-top: 4px;">組合現金殖利率 {plan_res['portfolio_div_yield']:.2f}%</div>
-        </div>
-        <div style="background: #ffffff; border: 1.5px solid #93c5fd; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-            <div style="font-size: 12px; color: #1e40af; margin-bottom: 4px;">📈 預期年化複合報酬率</div>
-            <div style="font-size: 22px; font-weight: 800; color: #2563eb;">{plan_res['weighted_annual_return']:.1f}%</div>
-            <div style="font-size: 11px; color: #1e40af; margin-top: 4px;">超額 Alpha 結合市場 Beta</div>
-        </div>
-        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">🔮 {plan_res['horizon_years']}年後預估資產總值</div>
-            <div style="font-size: 22px; font-weight: 800; color: #0f172a;">{c_sym} {plan_res['compounded_future_value']:,.0f}</div>
-            <div style="font-size: 11px; color: #475569; margin-top: 4px;">含累積配息 {c_sym} {plan_res['total_dividend_over_horizon']:,.0f}</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.write("")
-    st.subheader("📋 具體實戰下單採購清單（包含整張數與零股股數精確換算）")
-    st.caption("投資人直接依照此表格於券商 App 下單即可完成專業級核心-衛星配置：")
-    df_plan = pd.DataFrame(plan_res["plan_table"])
-    st.dataframe(df_plan, use_container_width=True, hide_index=True)
-
-    col_chart_p1, col_chart_p2 = st.columns([1.2, 1.8])
-    with col_chart_p1:
-        st.subheader("🍰 核心-衛星配置權重圓餅圖")
-        labels = [r["企業/基金名稱"] + f" ({r['配置角色'].split('】')[1]})" for r in plan_res["plan_table"]]
-        values = [float(r["目標權重"].replace("%", "")) for r in plan_res["plan_table"]]
-        fig_pie = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.4, textinfo='label+percent')])
-        fig_pie.update_layout(height=320, margin=dict(l=10, r=10, t=20, b=10))
-        st.plotly_chart(fig_pie, use_container_width=True)
-
-    with col_chart_p2:
-        st.subheader(f"🚀 {plan_res['horizon_years']} 年資產複利滾動預估軌跡")
-        years_list = list(range(0, plan_res['horizon_years'] + 1))
-        growth_curve = [custom_b * ((1 + plan_res['weighted_annual_return']/100) ** y) for y in years_list]
-        fig_growth = go.Figure()
-        fig_growth.add_trace(go.Scatter(
-            x=[f"第 {y} 年" for y in years_list],
-            y=growth_curve,
-            mode='lines+markers',
-            line=dict(color='#2563eb', width=3),
-            marker=dict(size=8, color='#1e40af'),
-            name="本金+複利增長"
-        ))
-        fig_growth.update_layout(height=320, margin=dict(l=10, r=10, t=20, b=10), yaxis_title=c_sym)
-        st.plotly_chart(fig_growth, use_container_width=True)
-
-    st.write("")
-    st.subheader("💡 核心-衛星（Core-Satellite）配置哲學與再平衡準則：")
-    with st.expander("Q1：為什麼不能 100% 買 AI 預測最高勝率的個股？"):
-        st.write("答：即使台積電具備世界第一的先進製程護城河，單一個股依然面臨地緣政治、地震震災或廠房工安等『非系統性風險（Idiosyncratic Risk）』。配置 40%~50% 於 0050 或 VOO 核心市值 ETF，能藉由 50 檔企業一籃子分散風險，提供永不倒閉的底層基石；再以 30% 衛星配置重壓 AI 模型篩選出之超額 Alpha 標的，兼顧『下檔極致安全』與『上檔超額暴發力』。")
-
-    with st.expander("Q2：買進後何時需要進行『資產再平衡（Rebalancing）』？"):
-        st.write("答：建議每年末或當任一衛星部位因股價飆漲『權重偏離初始設定超過 10 個百分點』時進行再平衡。例如：台積電大漲使衛星權重由 25% 膨脹至 40% 時，主動獲利了結超額部位，將資金轉入落後但體質優異的收息股或核心 ETF，落實『高割離席、逢低低買』的紀律投資。")
-
-
-# =========================================================================
 # PAGE 1: 機器學習長線標的智能診斷與勝率預測 (ML Inference & XAI)
 # =========================================================================
-elif nav_choice == NAV_PAGES[1]:
-    st.markdown('<div class="main-header">🎯 股票 / ETF 健檢與通勤預約掛單指引</div>', unsafe_allow_html=True)
+if nav_choice == "🎯 AI 標的智能診斷與勝率推論 (ML Inference)":
+    st.markdown('<div class="main-header">🎯 AI 標的智能診斷與勝率推論</div>', unsafe_allow_html=True)
     st.caption("輸入台股或美股代號，Scikit-Learn 機器學習模型即刻推論長線超額報酬勝率，並深度解析 8 大核心財務因子貢獻。")
 
     col_m, col_t, col_btn = st.columns([1.3, 2.4, 1])
@@ -375,65 +259,56 @@ elif nav_choice == NAV_PAGES[1]:
         market_mode = st.radio("選擇市場與標的類型", ["🇹🇼 台股個股", "📦 台灣熱門 ETF", "🇺🇸 美股個股", "📦 美國經典 ETF"], horizontal=False)
     
     with col_t:
-        input_type = st.radio("標的選擇方式", ["⚡ 熱門標的快速選", "✏️ 自訂代號手動輸入"], horizontal=True)
-
-        if input_type == "⚡ 熱門標的快速選":
-            if market_mode == "🇹🇼 台股個股":
-                quick_options = [
-                    "2330.TW - 台積電 (晶圓代工龍頭)",
-                    "2454.TW - 聯發科 (IC設計晶片王)",
-                    "2317.TW - 鴻海 (AI伺服器代工龍頭)",
-                    "2382.TW - 廣達 (雲端資料中心龍頭)",
-                    "2881.TW - 富邦金 (台灣金控獲利王)",
-                    "2886.TW - 兆豐金 (存股公股金控首選)",
-                    "1216.TW - 統一 (抗通膨民生食品王)"
-                ]
-                selected_label = st.selectbox("熱門台股個股快速選", quick_options)
-                ticker_input = selected_label.split(" - ")[0]
-            elif market_mode == "📦 台灣熱門 ETF":
-                quick_options = [
-                    "0050.TW - 元大台灣50 (市值型旗艦/台積電大盤成長)",
-                    "006208.TW - 富邦台50 (同臺灣50/超低0.24%費率首選)",
-                    "0056.TW - 元大高股息 (17年老牌高股息/季配息)",
-                    "00878.TW - 國泰永續高股息 (百萬人氣ESG抗跌存股/季配息)",
-                    "00919.TW - 群益台灣精選高息 (精準宣告高配息10%/季配息)",
-                    "00929.TW - 復華台灣科技優息 (純科技半導體/月配息)"
-                ]
-                selected_label = st.selectbox("台灣熱門 ETF 快速選", quick_options)
-                ticker_input = selected_label.split(" - ")[0]
-            elif market_mode == "🇺🇸 美股個股":
-                quick_options = [
-                    "AAPL - Apple (消費電子與iOS生態系)",
-                    "NVDA - NVIDIA (全球AI算力霸主)",
-                    "MSFT - Microsoft (企業雲端與Copilot)",
-                    "COST - Costco (好市多抗衰退零售)",
-                    "JNJ - Johnson & Johnson (62年股息貴族)",
-                    "KO - Coca-Cola (可口可樂抗通膨印鈔機)"
-                ]
-                selected_label = st.selectbox("熱門美股個股快速選", quick_options)
-                ticker_input = selected_label.split(" - ")[0]
-            else:
-                quick_options = [
-                    "VOO - Vanguard S&P 500 (巴菲特指定標普500旗艦/費率0.03%)",
-                    "QQQ - Invesco QQQ Trust (那斯達克科技七雄/資本利得王者)",
-                    "VTI - Vanguard Total Stock (全美市場大中小全包/極致分散)",
-                    "VT - Vanguard Total World (全球股票型一網打盡/地球文明)",
-                    "SCHD - Schwab U.S. Dividend (美股高股息兼股息成長聖杯)"
-                ]
-                selected_label = st.selectbox("美國熱門 ETF 快速選", quick_options)
-                ticker_input = selected_label.split(" - ")[0]
+        if market_mode == "🇹🇼 台股個股":
+            quick_options = [
+                "2330.TW - 台積電 (晶圓代工龍頭)",
+                "2454.TW - 聯發科 (IC設計晶片王)",
+                "2317.TW - 鴻海 (AI伺服器代工龍頭)",
+                "2382.TW - 廣達 (雲端資料中心龍頭)",
+                "2881.TW - 富邦金 (台灣金控獲利王)",
+                "2886.TW - 兆豐金 (存股公股金控首選)",
+                "1216.TW - 統一 (抗通膨民生食品王)"
+            ]
+            selected_label = st.selectbox("熱門台股個股快速選", quick_options)
+            default_t = selected_label.split(" - ")[0]
+            if st.session_state.get("demo_target"):
+                default_t = st.session_state.pop("demo_target")
+            ticker_input = st.text_input("或自訂台股代號（例：2308.TW, 2412.TW）", value=default_t)
+        elif market_mode == "📦 台灣熱門 ETF":
+            quick_options = [
+                "0050.TW - 元大台灣50 (市值型旗艦/台積電大盤成長)",
+                "006208.TW - 富邦台50 (同臺灣50/超低0.24%費率首選)",
+                "0056.TW - 元大高股息 (17年老牌高股息/季配息)",
+                "00878.TW - 國泰永續高股息 (百萬人氣ESG抗跌存股/季配息)",
+                "00919.TW - 群益台灣精選高息 (精準宣告高配息10%/季配息)",
+                "00929.TW - 復華台灣科技優息 (純科技半導體/月配息)"
+            ]
+            selected_label = st.selectbox("台灣熱門 ETF 快速選", quick_options)
+            default_t = selected_label.split(" - ")[0]
+            ticker_input = st.text_input("或自訂台灣 ETF 代號（例：00713.TW, 00692.TW）", value=default_t)
+        elif market_mode == "🇺🇸 美股個股":
+            quick_options = [
+                "AAPL - Apple (消費電子與iOS生態系)",
+                "NVDA - NVIDIA (全球AI算力霸主)",
+                "MSFT - Microsoft (企業雲端與Copilot)",
+                "COST - Costco (好市多抗衰退零售)",
+                "JNJ - Johnson & Johnson (62年股息貴族)",
+                "KO - Coca-Cola (可口可樂抗通膨印鈔機)"
+            ]
+            selected_label = st.selectbox("熱門美股個股快速選", quick_options)
+            default_t = selected_label.split(" - ")[0]
+            ticker_input = st.text_input("或自訂美股代號（例：GOOGL, AMZN, TSLA）", value=default_t)
         else:
-            if market_mode == "🇹🇼 台股個股":
-                ticker_input = st.text_input("自訂台股代號（例：2330.TW, 2454.TW, 2308.TW）", value="2330.TW")
-            elif market_mode == "📦 台灣熱門 ETF":
-                ticker_input = st.text_input("自訂台灣 ETF 代號（例：0050.TW, 00878.TW）", value="0050.TW")
-            elif market_mode == "🇺🇸 美股個股":
-                ticker_input = st.text_input("自訂美股代號（例：AAPL, NVDA, MSFT）", value="AAPL")
-            else:
-                ticker_input = st.text_input("自訂美股 ETF 代號（例：VOO, QQQ, SPY）", value="VOO")
-
-        if st.session_state.get("demo_target"):
-            ticker_input = st.session_state.pop("demo_target")
+            quick_options = [
+                "VOO - Vanguard S&P 500 (巴菲特指定標普500旗艦/費率0.03%)",
+                "QQQ - Invesco QQQ Trust (那斯達克科技七雄/資本利得王者)",
+                "VTI - Vanguard Total Stock (全美市場大中小全包/極致分散)",
+                "VT - Vanguard Total World (全球股票型一網打盡/地球文明)",
+                "SCHD - Schwab U.S. Dividend (美股高股息兼股息成長聖杯)"
+            ]
+            selected_label = st.selectbox("美國熱門 ETF 快速選", quick_options)
+            default_t = selected_label.split(" - ")[0]
+            ticker_input = st.text_input("或自訂美股 ETF 代號（例：DIA, SPY, SMH）", value=default_t)
 
     with col_btn:
         st.write("")
@@ -459,26 +334,8 @@ elif nav_choice == NAV_PAGES[1]:
         else:
             stock = get_stock_profile(ticker)
             etf = None
-            if stock:
-                status = evaluate_investment_status(stock)
-                ai_pred = predict_stock_ai(stock)
-            else:
-                status = None
-                ai_pred = None
-
-    if not is_etf and not stock:
-        st.error(f"❌ 查無股票代號「{ticker}」之即時報價或基本面資料！")
-        st.markdown(f"""
-        <div style="background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: 8px; padding: 14px 18px; margin: 10px 0 20px 0;">
-            <div style="font-weight: 700; color: #991b1b; font-size: 15px; margin-bottom: 6px;">💡 股票代號查詢提醒：</div>
-            <ul style="margin: 0; padding-left: 20px; color: #7f1d1d; font-size: 13.5px; line-height: 1.7;">
-                <li><b>您是否要查詢台積電？</b>：台積電的台灣證券代號為 <b>2330.TW</b>（台股目前沒有 <code>2300</code> 這個代號）。</li>
-                <li><b>常見熱門股票代號</b>：台積電 (<code>2330.TW</code>)、聯發科 (<code>2454.TW</code>)、鴻海 (<code>2317.TW</code>)、廣達 (<code>2382.TW</code>)、台達電 (<code>2308.TW</code>)、富邦金 (<code>2881.TW</code>)、兆豐金 (<code>2886.TW</code>)。</li>
-                <li><b>美股代號</b>：美股請輸入純英文字母代號，如 <code>AAPL</code> (蘋果)、<code>NVDA</code> (輝達)、<code>MSFT</code> (微軟)。</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-        st.stop()
+            status = evaluate_investment_status(stock)
+            ai_pred = predict_stock_ai(stock)
 
     # -------------------------------------------------------------
     # HERO 1: AI 機器學習長線勝率推論結果 (僅個股顯示)
@@ -563,7 +420,7 @@ elif nav_choice == NAV_PAGES[1]:
             <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
                 <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">🏢 標的代號與名稱</div>
                 <div style="font-size: 17px; font-weight: 800; color: #0f172a; word-break: break-word; line-height: 1.3;">{stock['name']}</div>
-                <div style="font-size: 11px; color: #0284c7; margin-top: 4px; font-weight: 600;">{stock.get('sector', '科技')} ｜ {stock.get('ticker', ticker)}</div>
+                <div style="font-size: 11px; color: #0284c7; margin-top: 4px; font-weight: 600;">{stock.get('sector', '科技')} ｜ {ticker}</div>
             </div>
             <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
                 <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">💵 即時股價</div>
@@ -596,59 +453,48 @@ elif nav_choice == NAV_PAGES[1]:
     col_chart, col_val = st.columns([1.6, 1.2])
 
     with col_chart:
-        st.subheader("🚌 上班族通勤預約掛單指引 (前一晚 / 搭車前掛單)")
+        st.subheader("📈 互動式 K 線走勢圖 (含成交量與均線支撐)")
+        hist_df = get_historical_candles(ticker, period="1y")
         
-        cheap_p = stock["cheap_price"] if not is_etf else round(etf["nav"] * 0.98, 2)
-        fair_p = stock["fair_value"] if not is_etf else etf["nav"]
-        curr_p = stock["price"] if not is_etf else etf["price"]
-        
-        # Calculate suggested order prices
-        order_price_1 = cheap_p
-        order_price_2 = round(cheap_p * 0.95, 1) if not is_etf else round(cheap_p * 0.98, 2)
-        
-        sample_budget = 50000.0 if currency == "NT$" else 2000.0
-        shares_1 = int(sample_budget // max(order_price_1, 1.0))
-        shares_2 = int(sample_budget // max(order_price_2, 1.0))
-
-        st.markdown(f"""
-        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 8px; padding: 14px 16px; margin-bottom: 12px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <span style="font-weight: 800; font-size: 14.5px; color: #166534;">🟢 建議預約掛單買點一（合理偏低）</span>
-                <span style="background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">平時回檔掛單</span>
-            </div>
-            <div style="font-size: 20px; font-weight: 800; color: #15803d; margin-bottom: 4px;">
-                {currency} {order_price_1:,.1f} <span style="font-size: 12px; font-weight: normal; color: #475569;">（較現價便宜 {max((curr_p - order_price_1)/curr_p*100, 0.0):.1f}%）</span>
-            </div>
-            <div style="font-size: 12.5px; color: #334155; line-height: 1.5;">
-                • <b>預約下單建議</b>：前一晚或早上搭車通勤時，在手機券商 App 預約此價格掛單 <b>1 張</b>（或零股 <b>{shares_1} 股</b>）。<br>
-                • <b>執行心態</b>：若盤中震盪回檔剛好跌到就自動撿便宜；沒跌到沒買到就算了，絕不隨市場追高！
-            </div>
-        </div>
-
-        <div style="background: #eff6ff; border: 1.5px solid #93c5fd; border-radius: 8px; padding: 14px 16px; margin-bottom: 12px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <span style="font-weight: 800; font-size: 14.5px; color: #1e40af;">💎 建議預約掛單買點二（甜甜大特價）</span>
-                <span style="background: #dbeafe; color: #1d4ed8; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">市場大跌時撿便宜</span>
-            </div>
-            <div style="font-size: 20px; font-weight: 800; color: #1d4ed8; margin-bottom: 4px;">
-                {currency} {order_price_2:,.1f} <span style="font-size: 12px; font-weight: normal; color: #475569;">（較現價便宜 {max((curr_p - order_price_2)/curr_p*100, 0.0):.1f}%）</span>
-            </div>
-            <div style="font-size: 12.5px; color: #334155; line-height: 1.5;">
-                • <b>預約下單建議</b>：遇到股市恐慌或利空大跌時，可預約掛單此價格買進 <b>1 張</b>（或零股 <b>{shares_2} 股</b>）。
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        if currency == "US$":
-            st.info("""
-            🇺🇸 **美股上班族小秘訣：GTC 長效單**
-            美股券商（如 Firstrade、嘉信、IB）皆支援 **GTC (Good-Till-Cancelled) 長效單**！您可以直接在 App 裡設定掛單「30 天或 60 天內有效」。掛著之後一個月內只要有跌到該買點，系統就會自動成交，上班族晚上完全不需要熬夜盯美股！
-            """)
+        if hist_df.empty:
+            st.warning("⚠️ 暫時無法取得該標的歷史 K 線數據，請檢查代號是否正確。")
         else:
-            st.info("""
-            🇹🇼 **台股上班族小秘訣：盤前預約單**
-            台股開盤時間為 09:00～13:30。上班族通常可以在前一晚 20:00 後，或早上 08:30 前搭車通勤時，在手機證券 App 設定「預約掛單」。開盤後系統會自動送出，有成交 App 會通知，完全不影響白天上班開會！
-            """)
+            fig = make_subplots(
+                rows=2, cols=1, shared_xaxes=True,
+                vertical_spacing=0.04, row_heights=[0.75, 0.25]
+            )
+            fig.add_trace(go.Candlestick(
+                x=hist_df.index,
+                open=hist_df['Open'], high=hist_df['High'],
+                low=hist_df['Low'], close=hist_df['Close'],
+                name='K線走勢',
+                increasing_line_color='#ef4444',
+                decreasing_line_color='#22c55e'
+            ), row=1, col=1)
+
+            fig.add_trace(go.Scatter(
+                x=hist_df.index, y=hist_df['MA20'],
+                mode='lines', line=dict(color='#3b82f6', width=1.5),
+                name='月線 (MA20)'
+            ), row=1, col=1)
+            fig.add_trace(go.Scatter(
+                x=hist_df.index, y=hist_df['MA60'],
+                mode='lines', line=dict(color='#f59e0b', width=1.5),
+                name='季線生命線 (MA60)'
+            ), row=1, col=1)
+
+            colors = ['#ef4444' if c >= o else '#22c55e' for c, o in zip(hist_df['Close'], hist_df['Open'])]
+            fig.add_trace(go.Bar(
+                x=hist_df.index, y=hist_df['Volume'],
+                marker_color=colors, name='成交量'
+            ), row=2, col=1)
+
+            fig.update_layout(
+                height=450, margin=dict(l=10, r=10, t=10, b=10),
+                xaxis_rangeslider_visible=False,
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+            )
+            st.plotly_chart(fig, use_container_width=True)
 
     with col_val:
         if is_etf:
@@ -841,8 +687,8 @@ elif nav_choice == NAV_PAGES[1]:
 # =========================================================================
 # PAGE 2: 機器學習長線優選標的排行榜 (ML Cross-Sectional Leaderboard)
 # =========================================================================
-elif nav_choice == NAV_PAGES[2]:
-    st.markdown('<div class="main-header">🏆 上班族精選存股排行榜（體質最好 ✕ 安心領息）</div>', unsafe_allow_html=True)
+elif nav_choice == "🏆 全市場長線優選標的排行榜 (ML Leaderboard)":
+    st.markdown('<div class="main-header">🏆 全市場長線優選標的排行榜</div>', unsafe_allow_html=True)
     st.caption("運用 Scikit-Learn 多因子隨機森林截面排序模型，對台股與美股全市場標的進行長線超額報酬勝率評估。")
 
     col_flt1, col_flt2, col_flt3 = st.columns([1.2, 1.2, 1.6])
@@ -938,9 +784,234 @@ elif nav_choice == NAV_PAGES[2]:
 
 
 # =========================================================================
+# PAGE 3: 機器學習模型訓練、特徵工程與防過擬合實驗室 (ML Lab)
+# =========================================================================
+elif nav_choice == "🛡️ 機器學習防過擬合與驗證實驗室 (ML Lab)":
+    st.markdown('<div class="main-header">🛡️ 機器學習模型訓練、特徵工程與防過擬合實驗室</div>', unsafe_allow_html=True)
+    st.caption("專題初審答辯關鍵核心：多演算法基準測試 (Multi-Model Benchmark)、5 折時間序列 Walk-Forward 交叉驗證、以及過擬合防禦架構。")
+
+    diag = get_ai_model_diagnostics()
+    metrics = diag["metrics"]
+    importances = diag["feature_importances"]
+    benchmarks = diag["benchmark_comparison"]
+
+    st.subheader("1. 多演算法模型盲測基準對比 (Multi-Model Empirical Benchmark)")
+    st.write("本研究對比了三種機器學習演算法在未見盲測集（Out-of-Sample Test Set）與 5 折時間序列交叉驗證下的表現：")
+    st.dataframe(pd.DataFrame(benchmarks), use_container_width=True, hide_index=True)
+
+    st.write("")
+    st.subheader("2. 防過擬合核心工程指標 (Walk-Forward Cross Validation)")
+    
+    # Custom Responsive Metric Cards with NO ellipsis truncation
+    st.markdown(f"""
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 16px;">
+        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">🎯 5折時間序列交叉驗證 AUC</div>
+            <div style="font-size: 24px; font-weight: 800; color: #1e40af;">{metrics['cv_auc_mean']}</div>
+            <div style="font-size: 11px; color: #16a34a; margin-top: 4px; font-weight: 600;">± {metrics['cv_auc_std']} 跨週期高度穩定</div>
+        </div>
+        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">🧪 盲測集 (Out-of-Sample) 準確率</div>
+            <div style="font-size: 24px; font-weight: 800; color: #0f172a;">{metrics['test_accuracy']}%</div>
+            <div style="font-size: 11px; color: #0284c7; margin-top: 4px;">未見市場樣本泛化測試</div>
+        </div>
+        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">📊 盲測 ROC-AUC 綜合分數</div>
+            <div style="font-size: 24px; font-weight: 800; color: #0f172a;">{metrics['test_auc']}</div>
+            <div style="font-size: 11px; color: #16a34a; margin-top: 4px; font-weight: 600;">具備極高超額報酬辨識力</div>
+        </div>
+        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">⚖️ 盲測 F1-Score 調和平均</div>
+            <div style="font-size: 24px; font-weight: 800; color: #0f172a;">{metrics['test_f1']}</div>
+            <div style="font-size: 11px; color: #0284c7; margin-top: 4px;">精確率與召回率平衡度優異</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.write("")
+    st.subheader("3. 過擬合災難實例對比 (In-Sample vs. Out-of-Sample)")
+    df_sim, train_idx = simulate_overfitting_comparison()
+    
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=df_sim["Date"], y=df_sim["Actual_Price"], mode='lines', name='真實股價 (Ground Truth)', line=dict(color='black', width=2)))
+    fig.add_trace(go.Scatter(x=df_sim["Date"][:train_idx], y=df_sim["Overfitted_ML_Curve"][:train_idx], mode='lines', name='過擬合模型 (訓練集擬合完美)', line=dict(color='green', dash='dot')))
+    fig.add_trace(go.Scatter(x=df_sim["Date"][train_idx:], y=df_sim["Overfitted_ML_Curve"][train_idx:], mode='lines', name='過擬合模型 (盲測集崩潰發散)', line=dict(color='red', width=3)))
+    fig.add_trace(go.Scatter(x=df_sim["Date"], y=df_sim["Robust_Factor_Trend"], mode='lines', name='多因子平滑長期趨勢 (本專案採用)', line=dict(color='blue', width=2)))
+    
+    fig.add_vline(x=df_sim["Date"].iloc[train_idx], line_dash="dash", line_color="gray", annotation_text="訓練 / 盲測 分界點")
+    fig.update_layout(title="時序價格預測模型 vs. 長期基本面因子模型 泛化能力對比", height=420)
+    st.plotly_chart(fig, use_container_width=True)
+
+    c_exp1, c_exp2 = st.columns(2)
+    with c_exp1:
+        st.markdown("""
+        <div style="background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 6px; padding: 12px 14px; font-size: 13px; line-height: 1.6; color: #991b1b;">
+            <b style="font-size: 14px;">🚨 傳統時序預測的致命過擬合：</b><br>
+            高階時序模型（如高階多項式或深度 LSTM）試圖擬合每日股價，在訓練集誤差極低；但因金融價格包含大量隨機漫步雜訊，一進入未知盲測集（紅線）直接嚴重發散！
+        </div>
+        """, unsafe_allow_html=True)
+    with c_exp2:
+        st.markdown("""
+        <div style="background: #ecfdf5; border-left: 4px solid #10b981; border-radius: 6px; padding: 12px 14px; font-size: 13px; line-height: 1.6; color: #065f46;">
+            <b style="font-size: 14px;">✅ 本專案採用的三大防過擬合策略：</b><br>
+            1. <b>問題重構</b>：放棄預測每日點位，改為預測「截面超額報酬機率」。<br>
+            2. <b>剪枝與正則化</b>：隨機森林限定樹深 (<code>max_depth=5</code>)，葉節點最小樣本數 (<code>min_samples_leaf=10</code>)，遏制孤立雜訊記憶。<br>
+            3. <b>Walk-Forward 交叉驗證</b>：嚴格依時間順序驗證，徹底防範未來資訊洩漏 (Data Snooping)。
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.write("")
+    st.subheader("4. 8 大財務動能因子重要性排序 (Feature Importance)")
+    st.caption("隨機森林分類器透過基尼不純度減少量（MDI）自動學習出之因子權重分佈：")
+
+    df_imp = pd.DataFrame(list(importances.items()), columns=["特徵因子", "重要性佔比 (%)"]).sort_values("重要性佔比 (%)", ascending=True)
+    fig_imp = go.Figure(go.Bar(
+        x=df_imp["重要性佔比 (%)"],
+        y=df_imp["特徵因子"],
+        orientation='h',
+        marker_color='#2563eb'
+    ))
+    fig_imp.update_layout(height=320, margin=dict(l=10, r=10, t=10, b=10))
+    st.plotly_chart(fig_imp, use_container_width=True)
+
+    st.write("")
+    st.subheader("5. 系統資安防禦強化 (G5)、即時稽核日誌 (G6) 與健康探針 (G7)")
+    st.caption("符合 NTUB 實務專題資安防護規範：嚴格白名單輸入檢驗、XSS HTML 實體轉義、零個資/零金鑰洩漏風險、以及生產環境日誌稽核。")
+
+    sec_rep = get_system_security_report()
+    s1, s2, s3, s4 = st.columns(4)
+    s1.success(f"**輸入正則白名單**\n\n{sec_rep['input_validation']}")
+    s2.info(f"**XSS / 注入防禦**\n\n{sec_rep['xss_defense']}")
+    s3.warning(f"**零個資儲存 (PII)**\n\n無狀態地端隔離")
+    s4.success(f"**API 金鑰洩漏風險**\n\n{sec_rep['api_leak_risk']}")
+
+    st.write("")
+    st.markdown("##### 📋 即時系統運作與安全稽核日誌 (Audit Logs - G6)")
+    st.caption("系統後端記憶體環形緩衝區（Ring Buffer）自動記錄之即時安全日誌：")
+    recent_logs = get_security_logger().get_recent_logs(limit=15)
+    df_logs = pd.DataFrame(recent_logs)[["timestamp", "category", "level", "message"]]
+    st.dataframe(df_logs, use_container_width=True, hide_index=True)
+
+
+# =========================================================================
+# PAGE 4: 個人化資金配置與預算試算 (Portfolio Planner)
+# =========================================================================
+elif nav_choice == "💼 個人化資金配置與預算試算 (Portfolio Planner)":
+    st.markdown('<div class="main-header">💼 個人化資金配置與預算試算（實戰下單採購表）</div>', unsafe_allow_html=True)
+    st.caption("直接回應期中評審核心要求：給予具體預算與投資年限，系統依據『核心-衛星 (Core-Satellite) 資產配置演算法』自動試算精確購買張數、零股股數與預估被動現金流。")
+
+    col_m_plan, col_b_plan, col_h_plan = st.columns([1, 1.4, 1.2])
+    with col_m_plan:
+        plan_market = st.radio("選擇投資市場", ["🇹🇼 台股市場 (新台幣 NT$)", "🇺🇸 美股市場 (美元 US$)"])
+        m_code = "TW" if "台股" in plan_market else "US"
+        c_sym = "NT$" if m_code == "TW" else "US$"
+    
+    with col_b_plan:
+        default_budget = 500000.0 if m_code == "TW" else 20000.0
+        budget_options = [100000, 300000, 500000, 1000000, 2000000] if m_code == "TW" else [5000, 10000, 20000, 50000, 100000]
+        st.write("快捷預算選擇：")
+        qb_cols = st.columns(len(budget_options))
+        for i, b_val in enumerate(budget_options):
+            b_label = f"{b_val//10000}萬" if m_code == "TW" else f"${b_val//1000}k"
+            if qb_cols[i].button(b_label, key=f"btn_b_{b_val}"):
+                st.session_state["plan_custom_budget"] = float(b_val)
+        
+        custom_b = st.number_input(
+            f"或自訂總投入資金預算 ({c_sym})：",
+            min_value=10000.0 if m_code == "TW" else 500.0,
+            max_value=50000000.0 if m_code == "TW" else 1000000.0,
+            value=float(st.session_state.get("plan_custom_budget", default_budget)),
+            step=50000.0 if m_code == "TW" else 1000.0
+        )
+    
+    with col_h_plan:
+        plan_risk = st.selectbox(
+            "風險屬性與配置策略",
+            [
+                "穩健平衡型 (Core-Satellite Balanced)",
+                "積極成長型 (Growth Alpha Aggressive)",
+                "退休收息型 (Income Conservative)"
+            ]
+        )
+        plan_horizon = st.slider("預計投資年限 (年)", min_value=1, max_value=10, value=3)
+
+    plan_res = calculate_portfolio_allocation(
+        total_budget=custom_b,
+        horizon_years=plan_horizon,
+        risk_profile=plan_risk,
+        market=m_code
+    )
+
+    # 4 Metric Cards (Zero Truncation Grid)
+    st.markdown(f"""
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 14px; margin-bottom: 16px;">
+        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">💰 總投資預算</div>
+            <div style="font-size: 22px; font-weight: 800; color: #0f172a;">{c_sym} {plan_res['budget']:,.0f}</div>
+            <div style="font-size: 11px; color: #16a34a; margin-top: 4px;">實際已運用 {c_sym} {plan_res['total_allocated']:,.0f}</div>
+        </div>
+        <div style="background: #ffffff; border: 1.5px solid #86efac; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <div style="font-size: 12px; color: #166534; margin-bottom: 4px;">💵 預估年領被動現金流</div>
+            <div style="font-size: 22px; font-weight: 800; color: #16a34a;">{c_sym} {plan_res['expected_annual_dividend']:,.0f}</div>
+            <div style="font-size: 11px; color: #166534; margin-top: 4px;">組合現金殖利率 {plan_res['portfolio_div_yield']:.2f}%</div>
+        </div>
+        <div style="background: #ffffff; border: 1.5px solid #93c5fd; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <div style="font-size: 12px; color: #1e40af; margin-bottom: 4px;">📈 預期年化複合報酬率</div>
+            <div style="font-size: 22px; font-weight: 800; color: #2563eb;">{plan_res['weighted_annual_return']:.1f}%</div>
+            <div style="font-size: 11px; color: #1e40af; margin-top: 4px;">超額 Alpha 結合市場 Beta</div>
+        </div>
+        <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">🔮 {plan_res['horizon_years']}年後預估資產總值</div>
+            <div style="font-size: 22px; font-weight: 800; color: #0f172a;">{c_sym} {plan_res['compounded_future_value']:,.0f}</div>
+            <div style="font-size: 11px; color: #475569; margin-top: 4px;">含累積配息 {c_sym} {plan_res['total_dividend_over_horizon']:,.0f}</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.write("")
+    st.subheader("📋 具體實戰下單採購清單（包含整張數與零股股數精確換算）")
+    st.caption("投資人直接依照此表格於券商 App 下單即可完成專業級核心-衛星配置：")
+    df_plan = pd.DataFrame(plan_res["plan_table"])
+    st.dataframe(df_plan, use_container_width=True, hide_index=True)
+
+    col_chart_p1, col_chart_p2 = st.columns([1.2, 1.8])
+    with col_chart_p1:
+        st.subheader("🍰 核心-衛星配置權重圓餅圖")
+        labels = [r["企業/基金名稱"] + f" ({r['配置角色'].split('】')[1]})" for r in plan_res["plan_table"]]
+        values = [float(r["目標權重"].replace("%", "")) for r in plan_res["plan_table"]]
+        fig_pie = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.4, textinfo='label+percent')])
+        fig_pie.update_layout(height=320, margin=dict(l=10, r=10, t=20, b=10))
+        st.plotly_chart(fig_pie, use_container_width=True)
+
+    with col_chart_p2:
+        st.subheader(f"🚀 {plan_res['horizon_years']} 年資產複利滾動預估軌跡")
+        years_list = list(range(0, plan_res['horizon_years'] + 1))
+        growth_curve = [custom_b * ((1 + plan_res['weighted_annual_return']/100) ** y) for y in years_list]
+        fig_growth = go.Figure()
+        fig_growth.add_trace(go.Scatter(
+            x=[f"第 {y} 年" for y in years_list],
+            y=growth_curve,
+            mode='lines+markers',
+            line=dict(color='#2563eb', width=3),
+            marker=dict(size=8, color='#1e40af'),
+            name="本金+複利增長"
+        ))
+        fig_growth.update_layout(height=320, margin=dict(l=10, r=10, t=20, b=10), yaxis_title=c_sym)
+        st.plotly_chart(fig_growth, use_container_width=True)
+
+    st.write("")
+    st.subheader("💡 核心-衛星（Core-Satellite）配置哲學與再平衡準則：")
+    with st.expander("Q1：為什麼不能 100% 買 AI 預測最高勝率的個股？"):
+        st.write("答：即使台積電具備世界第一的先進製程護城河，單一個股依然面臨地緣政治、地震震災或廠房工安等『非系統性風險（Idiosyncratic Risk）』。配置 40%~50% 於 0050 或 VOO 核心市值 ETF，能藉由 50 檔企業一籃子分散風險，提供永不倒閉的底層基石；再以 30% 衛星配置重壓 AI 模型篩選出之超額 Alpha 標的，兼顧『下檔極致安全』與『上檔超額暴發力』。")
+
+    with st.expander("Q2：買進後何時需要進行『資產再平衡（Rebalancing）』？"):
+        st.write("答：建議每年末或當任一衛星部位因股價飆漲『權重偏離初始設定超過 10 個百分點』時進行再平衡。例如：台積電大漲使衛星權重由 25% 膨脹至 40% 時，主動獲利了結超額部位，將資金轉入落後但體質優異的收息股或核心 ETF，落實『高割離席、逢低低買』的紀律投資。")
+
+
+# =========================================================================
 # PAGE 5: 台美熱門 ETF 存股指南（市值型 ✕ 高股息 ✕ 費率對決）
 # =========================================================================
-elif nav_choice == NAV_PAGES[3]:
+elif nav_choice == "📦 台美熱門 ETF 存股指南 (市值型 ✕ 高股息 ✕ 費率對決)":
     st.markdown('<div class="main-header">📦 台美熱門 ETF 存股指南（市值型 ✕ 高股息 ✕ 費率大對決）</div>', unsafe_allow_html=True)
     st.write("投資個股需要持續追蹤單一公司的財報與護城河；**ETF（指數股票型基金）**則是一次買進一籃子優質企業，具備**『自動汰弱留強、永遠不會倒閉、省時省力』**的長線存股優勢！")
 
@@ -1006,7 +1077,7 @@ elif nav_choice == NAV_PAGES[3]:
 # =========================================================================
 # PAGE 6: 台股高息「存股專區」（買了放著安心領利息）
 # =========================================================================
-elif nav_choice == NAV_PAGES[4]:
+elif nav_choice == "💰 台股高息「存股專區」 (買了放著安心領利息)":
     st.markdown('<div class="main-header">💰 台股穩定高息「存股專區」（買了放著安心領利息）</div>', unsafe_allow_html=True)
     st.write("台灣投資人最熱愛的**「存股領息」**哲學！挑選存股標的不能只看殖利率高低，必須符合三大標準：")
     

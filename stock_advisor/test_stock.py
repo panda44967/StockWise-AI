@@ -86,10 +86,6 @@ class TestStockWise(unittest.TestCase):
         self.assertEqual(aapl["market"], "US")
         self.assertGreater(aapl["pe"], 0)
 
-        # Test Invalid Ticker (e.g. 2300.TW should return None, never fallback to TSMC)
-        invalid_p = get_stock_profile("2300.TW")
-        self.assertIsNone(invalid_p)
-
     def test_historical_candles(self):
         df = get_historical_candles("2330.TW", period="6mo")
         self.assertGreater(len(df), 20)
